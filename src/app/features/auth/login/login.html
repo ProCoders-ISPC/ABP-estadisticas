@@ -1,0 +1,175 @@
+<app-back-to-home-button>Volver al inicio</app-back-to-home-button>
+
+<section class="login">
+  <div class="login__container">
+    <h2 class="login__title">¡Bienvenido a Profesort!</h2>
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="login__form">
+      
+      <div class="login__form-group">
+        <label class="login__label" for="email">Correo electrónico *</label>
+        <input
+          class="login__input"
+          [class.login__input--error]="hasFieldError('email')"
+          type="email"
+          id="email"
+          formControlName="email"
+          placeholder="usuario@ejemplo.com">
+        <div class="login__error-container">
+          <div class="login__error" *ngIf="hasFieldError('email')">
+            {{ getFieldError('email') }}
+          </div>
+        </div>
+      </div>
+
+      <div class="login__form-group">
+        <label class="login__label" for="password">Contraseña *</label>
+        <div class="login__password-wrapper">
+          <input
+            class="login__input"
+            [class.login__input--error]="hasFieldError('password')"
+            [type]="showPassword ? 'text' : 'password'"
+            id="password"
+            formControlName="password"
+            placeholder="Mínimo 6 caracteres">
+          <button 
+            type="button" 
+            class="login__toggle-password"
+            (click)="togglePasswordVisibility()"
+            title="Mostrar/Ocultar contraseña">
+            {{ showPassword ? '👁️' : '👁️‍🗨️' }}
+          </button>
+        </div>
+        <div class="login__error-container">
+          <div class="login__error" *ngIf="hasFieldError('password')">
+            {{ getFieldError('password') }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Mensajes de estado -->
+      <div class="login__messages" *ngIf="loginMessage || loginError">
+        <div class="login__success-message" *ngIf="loginMessage">
+          {{ loginMessage }}
+        </div>
+        <div class="login__error-message" *ngIf="loginError">
+          {{ loginError }}
+        </div>
+      </div>
+
+      <button 
+        class="login__button" 
+        type="submit"
+        [disabled]="isLoading">
+        <span *ngIf="!isLoading">Iniciar sesión</span>
+        <span *ngIf="isLoading">Iniciando sesión...</span>
+      </button>
+      
+      <div class="login__help">
+        <a (click)="openRecoveryModal()" class="login__help-link">¿Olvidaste tu contraseña?</a>
+      </div>
+
+      <div class="login__register-link">
+        <p>¿No estás registrado? <a routerLink="/register" class="login__register-link-text">Regístrate</a></p>
+      </div>
+
+      <!-- Campos obligatorios -->
+      <p class="login__required-note">
+        <small>Los campos marcados con * son obligatorios</small>
+      </p>
+    </form>
+  </div>
+</section>
+
+<!-- Modal de Recuperación de Contraseña -->
+<div class="recovery-modal" *ngIf="showRecoveryModal">
+  <div class="recovery-modal__overlay" (click)="closeRecoveryModal()"></div>
+  <div class="recovery-modal__content">
+    <div class="recovery-modal__header">
+      <h3 class="recovery-modal__title">Recuperar Contraseña</h3>
+      <button class="recovery-modal__close" (click)="closeRecoveryModal()">×</button>
+    </div>
+    
+    <div class="recovery-modal__body">
+      <!-- Paso 1: Ingresar Email -->
+      <div *ngIf="recoveryStep === 'email'">
+        <p class="recovery-modal__description">
+          Ingresa tu correo electrónico para recuperar tu contraseña.
+        </p>
+        <div class="recovery-modal__form-group">
+          <label class="recovery-modal__label">Correo electrónico</label>
+          <input 
+            type="email" 
+            class="recovery-modal__input"
+            [(ngModel)]="recoveryEmail"
+            placeholder="tu@email.com">
+        </div>
+        <button 
+          class="recovery-modal__button"
+          (click)="requestSecurityQuestion()">
+          Continuar
+        </button>
+      </div>
+
+      <!-- Paso 2: Responder Pregunta Secreta -->
+      <div *ngIf="recoveryStep === 'question'">
+        <p class="recovery-modal__description">
+          Responde la siguiente pregunta de seguridad:
+        </p>
+        <p class="recovery-modal__question">{{ securityQuestion }}</p>
+        <div class="recovery-modal__form-group">
+          <label class="recovery-modal__label">Tu respuesta</label>
+          <input 
+            type="text" 
+            class="recovery-modal__input"
+            [(ngModel)]="securityAnswer"
+            placeholder="Ingresa tu respuesta">
+        </div>
+        <button 
+          class="recovery-modal__button"
+          (click)="verifySecurityAnswer()">
+          Verificar
+        </button>
+      </div>
+
+      <!-- Paso 3: Nueva Contraseña -->
+      <div *ngIf="recoveryStep === 'newPassword'">
+        <p class="recovery-modal__description">
+          Ingresa tu nueva contraseña.
+        </p>
+        <div class="recovery-modal__form-group">
+          <label class="recovery-modal__label">Nueva contraseña</label>
+          <input 
+            type="password" 
+            class="recovery-modal__input"
+            [(ngModel)]="newPassword"
+            placeholder="Mínimo 6 caracteres">
+        </div>
+        <div class="recovery-modal__form-group">
+          <label class="recovery-modal__label">Confirmar contraseña</label>
+          <input 
+            type="password" 
+            class="recovery-modal__input"
+            [(ngModel)]="confirmPassword"
+            placeholder="Repite la contraseña">
+        </div>
+        <button 
+          class="recovery-modal__button"
+          (click)="resetPassword()">
+          Cambiar Contraseña
+        </button>
+      </div>
+
+      <!-- Mensajes -->
+      <div class="recovery-modal__messages">
+        <div class="recovery-modal__success" *ngIf="recoveryMessage">
+          {{ recoveryMessage }}
+        </div>
+        <div class="recovery-modal__error" *ngIf="recoveryError">
+          {{ recoveryError }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-background></app-background>

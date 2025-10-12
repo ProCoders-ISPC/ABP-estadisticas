@@ -1,0 +1,334 @@
+﻿<div class="estudiantes-container">
+  <div class="header-section">
+    <h2>👨‍🎓 Gestión de Estudiantes</h2>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#estudianteModal" (click)="abrirModalNuevo()">
+      + Nuevo Estudiante
+    </button>
+  </div>
+
+  <!-- Mensajes -->
+  @if (mensaje) {
+    <div class="alert alert-success">
+      {{ mensaje }}
+    </div>
+  }
+
+  @if (error) {
+    <div class="alert alert-danger">
+      {{ error }}
+    </div>
+  }
+
+  <!-- Barra de búsqueda -->
+  <div class="search-section">
+    <input 
+      type="text" 
+      class="form-control" 
+      placeholder="Buscar por nombre, legajo o email..."
+      [(ngModel)]="busquedaTerm"
+      (input)="onSearchInput($event)"
+    />
+  </div>
+
+  <!-- Cargando -->
+  @if (cargando) {
+    <div class="loading-indicator">
+      <div class="spinner"></div>
+      <p>Cargando estudiantes...</p>
+    </div>
+  }
+
+  <!-- Tabla de estudiantes -->
+  @if (!cargando && estudiantesFiltrados.length > 0) {
+    <div class="table-container">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Legajo</th>
+            <th>Nombre Completo</th>
+            <th>DNI</th>
+            <th>Email</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (estudiante of estudiantesFiltrados; track estudiante.id) {
+            <tr>
+              <td><strong>{{ estudiante.legajo }}</strong></td>
+              <td>{{ estudiante.nombre }} {{ estudiante.apellidos }}</td>
+              <td>{{ estudiante.dni }}</td>
+              <td>{{ estudiante.email }}</td>
+              <td>
+                <span class="badge" [class.badge-activo]="estudiante.is_active !== false" [class.badge-inactivo]="estudiante.is_active === false">
+                  {{ estudiante.is_active !== false ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+              <td>
+                <div class="actions-group">
+                  <button 
+                    class="btn btn-sm btn-secondary" 
+                    (click)="verInfoEstudiante(estudiante)"
+                    title="Ver más información"
+                  >
+                    <i class="fas fa-eye"></i>
+                  </button>
+                  <button 
+                    class="btn btn-sm btn-info" 
+                    data-bs-toggle="modal" 
+                    data-bs-target="#estudianteModal"
+                    (click)="abrirModalEditar(estudiante)"
+                    title="Editar"
+                  >
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button 
+                    class="btn btn-sm btn-danger" 
+                    (click)="eliminarEstudiante(estudiante)"
+                    title="Eliminar"
+                  >
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="stats-footer">
+      <p>Total de estudiantes: <strong>{{ estudiantesFiltrados.length }}</strong></p>
+    </div>
+  }
+
+  @if (!cargando && estudiantesFiltrados.length === 0 && estudiantes.length > 0) {
+    <div class="alert alert-info">
+      No se encontraron estudiantes con el criterio de búsqueda.
+    </div>
+  }
+
+  @if (!cargando && estudiantes.length === 0) {
+    <div class="alert alert-info">
+      No hay estudiantes registrados. Haga clic en "Nuevo Estudiante" para comenzar.
+    </div>
+  }
+</div>
+
+<!-- Modal para crear/editar estudiante -->
+<div class="modal fade" id="estudianteModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ modalTitle }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="estudianteForm">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Nombre *</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                formControlName="nombre"
+                [class.is-invalid]="estudianteForm.get('nombre')?.invalid && estudianteForm.get('nombre')?.touched"
+              />
+              @if (estudianteForm.get('nombre')?.invalid && estudianteForm.get('nombre')?.touched) {
+                <div class="invalid-feedback">El nombre es requerido</div>
+              }
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Apellidos *</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                formControlName="apellidos"
+                [class.is-invalid]="estudianteForm.get('apellidos')?.invalid && estudianteForm.get('apellidos')?.touched"
+              />
+              @if (estudianteForm.get('apellidos')?.invalid && estudianteForm.get('apellidos')?.touched) {
+                <div class="invalid-feedback">Los apellidos son requeridos</div>
+              }
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Legajo *</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                formControlName="legajo"
+                [class.is-invalid]="estudianteForm.get('legajo')?.invalid && estudianteForm.get('legajo')?.touched"
+              />
+              @if (estudianteForm.get('legajo')?.invalid && estudianteForm.get('legajo')?.touched) {
+                <div class="invalid-feedback">El legajo es requerido</div>
+              }
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <label class="form-label">DNI *</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                formControlName="dni"
+                [class.is-invalid]="estudianteForm.get('dni')?.invalid && estudianteForm.get('dni')?.touched"
+              />
+              @if (estudianteForm.get('dni')?.invalid && estudianteForm.get('dni')?.touched) {
+                <div class="invalid-feedback">El DNI es requerido</div>
+              }
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12 mb-3">
+              <label class="form-label">Email *</label>
+              <input 
+                type="email" 
+                class="form-control" 
+                formControlName="email"
+                [class.is-invalid]="estudianteForm.get('email')?.invalid && estudianteForm.get('email')?.touched"
+              />
+              @if (estudianteForm.get('email')?.invalid && estudianteForm.get('email')?.touched) {
+                <div class="invalid-feedback">
+                  @if (estudianteForm.get('email')?.errors?.['required']) {
+                    El email es requerido
+                  }
+                  @if (estudianteForm.get('email')?.errors?.['email']) {
+                    El formato del email es inválido
+                  }
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Teléfono</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                formControlName="telefono"
+              />
+            </div>
+            
+            <div class="col-md-8 mb-3">
+              <label class="form-label">Domicilio</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                formControlName="domicilio"
+              />
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Fecha de Nacimiento</label>
+              <input 
+                type="date" 
+                class="form-control" 
+                formControlName="fecha_nacimiento"
+              />
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="cancelarEdicion()">
+          Cancelar
+        </button>
+        <button type="button" class="btn btn-primary" (click)="onSubmit()" [disabled]="estudianteForm.invalid">
+          {{ editandoEstudiante ? 'Actualizar' : 'Guardar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Información Detallada -->
+@if (mostrarModalInfo && estudianteInfo) {
+  <div class="modal-overlay" (click)="cerrarModalInfo()">
+    <div class="modal-info-content" (click)="$event.stopPropagation()">
+      <div class="modal-info-header">
+        <h3><i class="fas fa-user-graduate me-2"></i>Información del Estudiante</h3>
+        <button class="btn-close-modal" (click)="cerrarModalInfo()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-info-body">
+        <div class="info-section">
+          <h4><i class="fas fa-id-card me-2"></i>Datos Personales</h4>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Nombre Completo:</span>
+              <span class="info-value">{{ estudianteInfo.nombre }} {{ estudianteInfo.apellidos }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Legajo:</span>
+              <span class="info-value">{{ estudianteInfo.legajo }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">DNI:</span>
+              <span class="info-value">{{ estudianteInfo.dni }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Email:</span>
+              <span class="info-value">{{ estudianteInfo.email }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Estado:</span>
+              <span class="info-value">
+                <span class="badge" [class.badge-activo]="estudianteInfo.is_active !== false" [class.badge-inactivo]="estudianteInfo.is_active === false">
+                  {{ estudianteInfo.is_active !== false ? 'Activo' : 'Inactivo' }}
+                </span>
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="info-section">
+          <h4><i class="fas fa-chart-line me-2"></i>Estadísticas Académicas</h4>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-book"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value">0</span>
+                <span class="stat-label">Materias Cursando</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-check-circle"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value">0%</span>
+                <span class="stat-label">Asistencia</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-trophy"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value">-</span>
+                <span class="stat-label">Promedio</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-info-footer">
+        <button class="btn btn-secondary" (click)="cerrarModalInfo()">
+          <i class="fas fa-times me-2"></i>Cerrar
+        </button>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#estudianteModal" (click)="abrirModalEditar(estudianteInfo); cerrarModalInfo()">
+          <i class="fas fa-edit me-2"></i>Editar Estudiante
+        </button>
+      </div>
+    </div>
+  </div>
+}

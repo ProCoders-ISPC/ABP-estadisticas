@@ -1,0 +1,54 @@
+
+<nav class="header__nav-desktop">
+  <a [routerLink]="aboutLinkRoute">{{ aboutLinkText }}</a>
+  @if (!isAuthenticated) {
+    <a routerLink="/register">Registro</a>
+    <a routerLink="/login">Iniciar Sesión</a>
+  } @else {
+    <div class="dropdown" (clickOutside)="closeDropdown()">
+      <button class="btn-user-dropdown" type="button" (click)="toggleDropdown($event)" [attr.aria-expanded]="isDropdownOpen">
+        <i class="fa-solid fa-user"></i>
+        {{ currentUser?.name }}
+        <i class="fa-solid fa-chevron-down" [class.rotated]="isDropdownOpen"></i>
+      </button>
+      @if (isDropdownOpen) {
+        <ul class="dropdown-menu show">
+          <li><button class="dropdown-item" type="button" (click)="goToPanel()">Panel {{ currentUser?.id_rol === 1 ? 'Admin' : 'Docente' }}</button></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><button class="dropdown-item" type="button" (click)="logout()">Cerrar Sesión</button></li>
+        </ul>
+      }
+    </div>
+  }
+</nav>
+
+
+<div class="header__burger">
+  <input
+    type="checkbox"
+    id="header-burger-checkbox"
+    class="header__burger-checkbox"
+  />
+  <label for="header-burger-checkbox" class="header__burger-toggle">
+    <span class="header__burger-bar"></span>
+    <span class="header__burger-bar"></span>
+    <span class="header__burger-bar"></span>
+  </label>
+  <nav class="header__nav-mobile">
+    <label for="header-burger-checkbox" class="header__close-btn"></label>
+    <a [routerLink]="aboutLinkRoute">{{ aboutLinkText }}</a>
+    @if (!isAuthenticated) {
+      <a routerLink="/register">Registro</a>
+      <a routerLink="/login">Iniciar Sesión</a>
+    } @else {
+      <div class="mobile-user-menu">
+        <span class="user-name">
+          <i class="fa-solid fa-user"></i>
+          {{ currentUser?.name }}
+        </span>
+        <a (click)="goToPanel()">Panel {{ currentUser?.id_rol === 1 ? 'Admin' : 'Docente' }}</a>
+        <a (click)="logout()">Cerrar Sesión</a>
+      </div>
+    }
+  </nav>
+</div>

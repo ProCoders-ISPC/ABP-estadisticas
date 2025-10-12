@@ -1,0 +1,101 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# Compiled output
+/dist
+/tmp
+/out-tsc
+/bazel-out
+
+# Node
+/node_modules
+npm-debug.log
+yarn-error.log
+
+# IDEs and editors
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+# Miscellaneous
+/.angular/cache
+.sass-cache/
+/connect.lock
+/coverage
+/libpeerconnection.log
+testem.log
+/typings
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Build files
+*.js.map
+*.css.map
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Testing
+/coverage
+/.nyc_output
+
+# Angular specific
+/e2e/*.js
+/e2e/*.map
+
+# Package managers
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Optional: Uncomment if you don't want to commit lock files
+# However, it's recommended to commit lock files for consistency
+
+# IDEs
+*.swp
+*.swo
+*~
+.idea
+*.iml
+*.ipr
+*.iws
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Mock API (opcional - descomenta si no quieres subir la mock-api)
+# /mock-api/node_modules
+
+# Temporary files
+*.tmp
+*.temp

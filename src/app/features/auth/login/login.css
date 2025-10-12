@@ -1,0 +1,452 @@
+/* ===== LOGIN FORM STYLES ===== */
+.login {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+
+}
+
+.login__container {
+  background-color: var(--primary-dark);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px var(--shadow-light);
+  padding: 30px;
+  width: 100%;
+  max-width: 450px;
+  min-height: 400px;
+  position: relative;
+  color: var(--white);
+    z-index: 10;
+}
+
+.login__title {
+  text-align: center;
+  font-size: 1.8rem;
+  color: var(--white);
+  margin-bottom: 30px;
+}
+
+.login__form {
+  display: flex;
+  flex-direction: column;
+}
+
+.login__form-group {
+  margin-bottom: 20px;
+  min-height: 70px;
+  display: flex;
+  flex-direction: column;
+}
+
+.login__label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: var(--white);
+}
+
+.login__input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 16px;
+  box-sizing: border-box;
+  font-family: inherit;
+  background-color: var(--white);
+  color: var(--text-dark);
+}
+
+.login__input:focus {
+  outline: none;
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 2px rgba(58, 189, 204, 0.2);
+}
+
+.login__input::placeholder {
+  color: #999;
+  opacity: 1;
+}
+
+.login__input--error {
+  border-color: #e74c3c;
+  box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2);
+}
+
+.login__error-container {
+  height: 22px;
+  margin-top: 5px;
+  display: flex;
+  align-items: flex-start;
+}
+
+.login__error {
+  color: #e74c3c;
+  font-size: 0.8rem;
+  line-height: 1.2;
+  margin: 0;
+  text-align: left;
+  width: 100%;
+  display: block;
+}
+
+.login__button {
+  width: 100%;
+  padding: 14px 0;
+  background-color: var(--secondary-dark, #063c3e);
+  color: var(--white);
+  border: none;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 10px;
+  box-sizing: border-box;
+  font-family: "Acephimere", sans-serif;
+  box-shadow: 0 4px 15px var(--shadow-medium);
+}
+
+.login__button:hover,
+.login__button:focus {
+  background-color: var(--primary-dark, #084c4e);
+}
+
+.login__button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.login__help {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 0.9rem;
+  color: var(--white);
+}
+
+.login__help-link {
+  color: var(--accent-yellow);
+  text-decoration: none;
+}
+
+.login__help-link:hover {
+  text-decoration: underline;
+}
+
+.login__success-message {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #c3e6cb;
+  margin-top: 15px;
+  text-align: center;
+}
+
+.login__required-note {
+  text-align: center;
+  margin-top: 10px;
+  font-style: italic;
+  color: var(--white);
+  font-weight: bold;
+  margin-bottom: 0;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .login {
+    padding: 15px;
+  }
+
+  .login__container {
+    padding: 25px;
+  }
+}
+
+@media (max-width: 480px) {
+  .login {
+    padding: 10px;
+  }
+
+  .login__container {
+    padding: 20px;
+  }
+
+  .login__title {
+    font-size: 1.4rem;
+  }
+
+  .login__input {
+    font-size: 14px;
+    padding: 10px;
+  }
+}
+
+/* ===== MENSAJES DE ESTADO ===== */
+.login__messages {
+  margin-bottom: 20px;
+}
+
+.login__success-message {
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  color: #155724;
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.login__error-message {
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.login__error-message::before {
+  content: '⚠️';
+  font-size: 1.2rem;
+}
+
+/* ===== ENLACE DE REGISTRO ===== */
+.login__register-link {
+  text-align: center;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.login__register-link p {
+  margin: 0;
+  color: var(--white);
+  font-size: 0.9rem;
+}
+
+.login__register-link-text {
+  color: var(--primary-light);
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.login__register-link-text:hover {
+  color: var(--white);
+  text-decoration: underline;
+}
+
+/* ===== PASSWORD VISIBILITY TOGGLE ===== */
+.login__password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.login__toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 4px 8px;
+  color: var(--text-dark);
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.login__toggle-password:hover {
+  opacity: 1;
+}
+
+.login__password-wrapper .login__input {
+  padding-right: 45px;
+}
+
+/* ===== RECOVERY MODAL ===== */
+.recovery-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.recovery-modal__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  cursor: pointer;
+}
+
+.recovery-modal__content {
+  position: relative;
+  background-color: var(--primary-dark);
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  z-index: 1001;
+}
+
+.recovery-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 25px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.recovery-modal__title {
+  font-size: 1.5rem;
+  color: var(--white);
+  margin: 0;
+}
+
+.recovery-modal__close {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: var(--white);
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.recovery-modal__close:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.recovery-modal__body {
+  padding: 25px;
+}
+
+.recovery-modal__description {
+  color: var(--white);
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.recovery-modal__question {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 15px;
+  border-radius: 6px;
+  color: var(--accent-yellow);
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.recovery-modal__form-group {
+  margin-bottom: 20px;
+}
+
+.recovery-modal__label {
+  display: block;
+  color: var(--white);
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.recovery-modal__input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 16px;
+  box-sizing: border-box;
+  font-family: inherit;
+  background-color: var(--white);
+  color: var(--text-dark);
+}
+
+.recovery-modal__input:focus {
+  outline: none;
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 2px rgba(58, 189, 204, 0.2);
+}
+
+.recovery-modal__button {
+  width: 100%;
+  padding: 14px;
+  background-color: var(--secondary-dark);
+  color: var(--white);
+  border: none;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-family: "Acephimere", sans-serif;
+  box-shadow: 0 4px 15px var(--shadow-medium);
+}
+
+.recovery-modal__button:hover {
+  background-color: var(--primary-dark);
+}
+
+.recovery-modal__messages {
+  margin-top: 20px;
+}
+
+.recovery-modal__success {
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  color: #155724;
+  padding: 12px;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.recovery-modal__error {
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+  padding: 12px;
+  border-radius: 6px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .recovery-modal__content {
+    max-width: 95%;
+  }
+  
+  .recovery-modal__header {
+    padding: 15px 20px;
+  }
+  
+  .recovery-modal__body {
+    padding: 20px;
+  }
+}
