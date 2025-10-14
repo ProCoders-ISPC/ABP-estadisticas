@@ -37,8 +37,9 @@ export class MateriasLocalService {
 
   updateMateria(id: number, materia: Partial<Materia>): Observable<Materia> {
     return new Observable(observer => {
-      // Crear una copia sin el docenteId que es manejado por asignaciones
-      const { docenteId, docenteNombre, docenteLegajo, ...materiaData } = materia;
+  // Crear una copia sin las propiedades relacionadas al docente (se manejan por asignaciones)
+  // Evitamos pasar campos que pueden ser null (docenteDni/docenteEmail) al LocalStorageService
+  const { docenteId, docenteNombre, docenteLegajo, docenteDni, docenteEmail, ...materiaData } = materia;
       const success = this.localStorageService.updateMateria(id, materiaData);
       if (success) {
         const materiaActualizada = this.localStorageService.getMateriaById(id);
