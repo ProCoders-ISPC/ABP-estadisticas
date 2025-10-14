@@ -3,6 +3,7 @@ import { AdminLayout } from './admin-layout/layout';
 import { AdminDocenteComponent } from './admin-docente/admindocente';
 import { EstudiantesComponent } from './admin-estudiantes/estudiantes';
 import { Materias } from './admin-materias/materias';
+import { AdminAsistenciaComponent } from './admin-asistencia/admin-asistencia';
 import { AdminGuard } from '../../core/guards/guards';
 
 export const ADMIN_ROUTES: Routes = [
@@ -15,6 +16,7 @@ export const ADMIN_ROUTES: Routes = [
     { path: 'docentes', component: AdminDocenteComponent },
     { path: 'estudiantes', component: EstudiantesComponent },
     { path: 'materias', component: Materias },
+    { path: 'asistencia', component: AdminAsistenciaComponent },
     { path: 'informes', loadComponent: () => import('./informes/informes').then(m => m.InformesComponent) }
     ],
   },

@@ -41,6 +41,10 @@ export class AdminDocenteComponent implements OnInit {
   mensajeModal = '';
   errorModal = '';
   
+  // Propiedades para el modal de información
+  mostrarModalInfo = false;
+  docenteInfo: DocenteCarga | null = null;
+  
   
   constructor(
     private adminDocenteService: AdminDocenteService,
@@ -335,5 +339,16 @@ export class AdminDocenteComponent implements OnInit {
         }
       });
     }
+  }
+
+  // Métodos para el modal de información
+  verInfoDocente(docente: DocenteCarga): void {
+    this.docenteInfo = docente;
+    this.mostrarModalInfo = true;
+  }
+
+  cerrarModalInfo(): void {
+    this.mostrarModalInfo = false;
+    this.docenteInfo = null;
   }
 }

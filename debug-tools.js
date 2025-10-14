@@ -197,3 +197,80 @@ function ayuda() {
 // Mostrar ayuda al cargar
 console.log('🎓 === PROFESORT DEBUG TOOLS ===');
 console.log('Escribe ayuda() para ver los comandos disponibles\n');
+
+// =========================
+// CARGAR DATOS DE DEMO PARA ESTADÍSTICAS
+// Ejecutar en consola o incluir temporalmente en el index.html para poblar localStorage
+window.cargarDatosDemoEstadisticas = function() {
+  // Materias demo
+  const materias = [
+    { id: 1, nombre: 'Matemática I', area: 'Exactas' },
+    { id: 2, nombre: 'Lengua', area: 'Lengua' },
+    { id: 3, nombre: 'Historia', area: 'Sociales' },
+    { id: 4, nombre: 'Biología', area: 'Naturales' },
+    { id: 5, nombre: 'Física', area: 'Exactas' },
+    { id: 6, nombre: 'Literatura', area: 'Lengua' },
+    { id: 7, nombre: 'Geografía', area: 'Sociales' },
+    { id: 8, nombre: 'Química', area: 'Exactas' }
+  ];
+  localStorage.setItem('profesort_materias', JSON.stringify(materias));
+
+  // Estudiantes demo
+  const estudiantes = [
+    { id: 1, nombre: 'Ana López', legajo: 'A001' },
+    { id: 2, nombre: 'Juan Pérez', legajo: 'A002' },
+    { id: 3, nombre: 'María Gómez', legajo: 'A003' },
+    { id: 4, nombre: 'Carlos Díaz', legajo: 'A004' },
+    { id: 5, nombre: 'Lucía Torres', legajo: 'A005' },
+    { id: 6, nombre: 'Pedro Ruiz', legajo: 'A006' },
+    { id: 7, nombre: 'Sofía Romero', legajo: 'A007' },
+    { id: 8, nombre: 'Martín Castro', legajo: 'A008' }
+  ];
+  localStorage.setItem('profesort_estudiantes', JSON.stringify(estudiantes));
+
+  // Asignaciones (cada estudiante tiene 2 materias)
+  const asignaciones = [
+    { estudianteId: 1, materiaId: 1 },
+    { estudianteId: 1, materiaId: 2 },
+    { estudianteId: 2, materiaId: 3 },
+    { estudianteId: 2, materiaId: 4 },
+    { estudianteId: 3, materiaId: 5 },
+    { estudianteId: 3, materiaId: 6 },
+    { estudianteId: 4, materiaId: 7 },
+    { estudianteId: 4, materiaId: 8 },
+    { estudianteId: 5, materiaId: 1 },
+    { estudianteId: 5, materiaId: 3 },
+    { estudianteId: 6, materiaId: 2 },
+    { estudianteId: 6, materiaId: 4 },
+    { estudianteId: 7, materiaId: 5 },
+    { estudianteId: 7, materiaId: 7 },
+    { estudianteId: 8, materiaId: 6 },
+    { estudianteId: 8, materiaId: 8 }
+  ];
+  localStorage.setItem('profesort_asignaciones', JSON.stringify(asignaciones));
+
+  // Asistencias (varias fechas, estados variados)
+  const estados = ['PRESENTE', 'AUSENTE', 'TARDANZA'];
+  const asistencias = [];
+  let id = 1;
+  for (let d = 1; d <= 10; d++) {
+    const fecha = `2025-10-${d.toString().padStart(2, '0')}`;
+    asignaciones.forEach(asig => {
+      const estado = estados[Math.floor(Math.random() * estados.length)];
+      asistencias.push({
+        id: id++,
+        id_estudiante: asig.estudianteId,
+        id_materia: asig.materiaId,
+        id_docente: 1,
+        fecha,
+        estado,
+        observaciones: '',
+        created_at: fecha + 'T08:00:00Z'
+      });
+    });
+  }
+  localStorage.setItem('profesort_asistencias', JSON.stringify(asistencias));
+
+  alert('Datos de ejemplo para estadísticas cargados en localStorage. Recarga la página para ver los gráficos completos.');
+};
+// Ejecuta en consola: cargarDatosDemoEstadisticas();

@@ -23,6 +23,17 @@ export interface EstudianteAsistencia {
   asistenciaId?: number;
 }
 
+export interface AsistenciaRegistro {
+  id: number;
+  estudianteId: number;
+  estudianteNombre: string;
+  materiaId: number;
+  materiaNombre: string;
+  fecha: string;
+  estado: 'PRESENTE' | 'AUSENTE' | 'TARDANZA';
+  observaciones?: string;
+}
+
 export interface ResumenAsistencia {
   totalClases: number;
   presentes: number;
@@ -85,5 +96,65 @@ export class AsistenciaService {
       ? `${this.apiUrl}/resumen/estudiante/${estudianteId}/materia/${materiaId}`
       : `${this.apiUrl}/resumen/estudiante/${estudianteId}`;
     return this.http.get<ResumenAsistencia>(url);
+  }
+
+  updateAsistencia(id: number, datos: Partial<AsistenciaRegistro>): Observable<AsistenciaRegistro> {
+    if (environment.useLocalStorage) {
+      return new Observable(observer => {
+        // Simular actualización en LocalStorage
+        const asistencias = JSON.parse(localStorage.getItem('profesort_asistencias') || '[]');
+        const index = asistencias.findIndex((a: any) => a.id === id);
+        
+        if (index !== -1) {
+          asistencias[index] = { ...asistencias[index], ...datos };
+          localStorage.setItem('profesort_asistencias', JSON.stringify(asistencias));
+          observer.next(asistencias[index]);
+          observer.complete();
+        } else {
+          observer.error(new Error('Asistencia no encontrada'));
+        }
+      });
+    } else {
+      return this.http.put<AsistenciaRegistro>(`${this.apiUrl}/${id}`, datos);
+    }
+  }
+
+  deleteAsistencia(id: number): Observable<void> {
+    if (environment.useLocalStorage) {
+      return new Observable(observer => {
+        const asistencias = JSON.parse(localStorage.getItem('profesort_asistencias') || '[]');
+        const filtered = asistencias.filter((a: any) => a.id !== id);
+        localStorage.setItem('profesort_asistencias', JSON.stringify(filtered));
+        observer.next();
+        observer.complete();
+      });
+    } else {
+      return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    }
+  }
+
+  getAsistenciasByMateriaAndFecha(materiaId: number, fecha: string): Observable<AsistenciaRegistro[]> {
+    if (environment.useLocalStorage) {
+      return new Observable(observer => {
+        const asistencias = JSON.parse(localStorage.getItem('profesort_asistencias') || '[]');
+        const filtered = asistencias.filter((a: any) => 
+          a.materiaId === materiaId && a.fecha === fecha
+        );
+        observer.next(filtered);
+        observer.complete();
+      });
+    } else {
+      return this.http.get<AsistenciaRegistro[]>(
+        `${this.apiUrl}/materia/${materiaId}/fecha/${fecha}`
+      );
+    }
+  }
+
+  getAllAsistencias(): Observable<Asistencia[]> {
+    if (environment.useLocalStorage) {
+      return this.asistenciaLocalService.getAllAsistencias();
+    } else {
+      return this.http.get<Asistencia[]>(this.apiUrl);
+    }
   }
 }

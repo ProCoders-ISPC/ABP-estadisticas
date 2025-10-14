@@ -71,13 +71,14 @@
               </tbody>
             </table>
           </div>
-          
+        
           <div class="interpretation">
             <h4>Interpretación del Análisis</h4>
             <p>{{ getInterpretacionDistribucion() }}</p>
           </div>
         </div>
       }
+      
 
       @if (tipoInforme === 'carga-academica' && datosGraficoCarga) {
         <div class="analysis-section">
@@ -160,7 +161,7 @@
               <div class="chart-header">
                 <h4>Comparativo: Materias Asignadas vs Sin Asignar</h4>
               </div>
-              <div class="comparison-chart">
+              <div class="comparison-grid">
                 @for (area of distribucionMaterias; track area.area) {
                   <div class="area-comparison">
                     <div class="area-name">{{ area.area }}</div>
@@ -398,6 +399,157 @@
                 estudiantes con asistencia crítica (menor al 60%) que requieren seguimiento especial.
               </p>
             }
+          </div>
+        </div>
+      }
+
+      <!-- Nueva Estadística 1: Rendimiento por Área -->
+      @if (tipoInforme === 'distribucion-areas') {
+        <div class="chart-section">
+          <div class="section-header">
+            <h3><i class="fas fa-chart-bar me-2"></i>Rendimiento Académico por Área</h3>
+            <p class="section-description">Comparativa de asistencia promedio entre diferentes áreas de conocimiento</p>
+          </div>
+          <div class="chart-container" style="height: 400px;">
+            <canvas id="graficoRendimientoAreas"></canvas>
+          </div>
+        </div>
+      }
+
+      <!-- Nueva Estadística 2: Comparativa Mensual -->
+      @if (tipoInforme === 'estudiantes-asistencia') {
+        <div class="chart-section">
+          <div class="section-header">
+            <h3><i class="fas fa-chart-line me-2"></i>Evolución Mensual de Asistencia</h3>
+            <p class="section-description">Tendencia de asistencia a lo largo de los últimos 6 meses</p>
+          </div>
+          <div class="chart-container" style="height: 400px;">
+            <canvas id="graficoComparativaMensual"></canvas>
+          </div>
+          
+          <!-- Tarjetas de resumen dinámicas -->
+          <div class="stats-cards-row">
+            <div class="stat-card-mini success">
+              <div class="stat-icon">
+                <i class="fas fa-chart-line"></i>
+              </div>
+              <div class="stat-data">
+                <span class="stat-value">{{ evolucionAsistenciaMensual.length > 0 ? 'Datos Reales' : 'Sin Datos' }}</span>
+                <span class="stat-label">Estado</span>
+              </div>
+            </div>
+            
+            <div class="stat-card-mini info">
+              <div class="stat-icon">
+                <i class="fas fa-calendar"></i>
+              </div>
+              <div class="stat-data">
+                <span class="stat-value">{{ evolucionAsistenciaMensual.length }}</span>
+                <span class="stat-label">Meses con Datos</span>
+              </div>
+            </div>
+            
+            <div class="stat-card-mini primary">
+              <div class="stat-icon">
+                <i class="fas fa-database"></i>
+              </div>
+              <div class="stat-data">
+                @if (evolucionAsistenciaMensual.length > 0) {
+                  <span class="stat-value">{{ evolucionAsistenciaMensual[evolucionAsistenciaMensual.length - 1]?.totalRegistros || 0 }}</span>
+                } @else {
+                  <span class="stat-value">0</span>
+                }
+                <span class="stat-label">Registros Último Mes</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Nueva Estadística 3: Análisis de Varianza -->
+      @if (tipoInforme === 'distribucion-materias' && datosVarianza) {
+        <div class="chart-section">
+          <div class="section-header">
+            <h3><i class="fas fa-chart-radar me-2"></i>Análisis de Varianza: Distribución de Materias</h3>
+            <p class="section-description">Medidas de dispersión y variabilidad en la asignación de materias por área</p>
+          </div>
+          
+          <!-- Estadísticas de Varianza -->
+          <div class="variance-stats">
+            <div class="variance-group">
+              <h4><i class="fas fa-check-circle text-success me-2"></i>Materias Asignadas</h4>
+              <div class="variance-metrics">
+                <div class="metric-item">
+                  <span class="metric-label">Promedio:</span>
+                  <span class="metric-value">{{ datosVarianza.asignadas.promedio.toFixed(1) }}</span>
+                </div>
+                <div class="metric-item">
+                  <span class="metric-label">Varianza:</span>
+                  <span class="metric-value">{{ getVarianzaFormateada('asignadas') }}</span>
+                </div>
+                <div class="metric-item">
+                  <span class="metric-label">Desviación:</span>
+                  <span class="metric-value">{{ getDesviacionVarianzaFormateada('asignadas') }}</span>
+                </div>
+                <div class="metric-item">
+                  <span class="metric-label">Coef. Variación:</span>
+                  <span class="metric-value">{{ getCoeficienteVariacionFormateado('asignadas') }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="variance-group">
+              <h4><i class="fas fa-exclamation-circle text-danger me-2"></i>Materias Sin Asignar</h4>
+              <div class="variance-metrics">
+                <div class="metric-item">
+                  <span class="metric-label">Promedio:</span>
+                  <span class="metric-value">{{ datosVarianza.sinAsignar.promedio.toFixed(1) }}</span>
+                </div>
+                <div class="metric-item">
+                  <span class="metric-label">Varianza:</span>
+                  <span class="metric-value">{{ getVarianzaFormateada('sinAsignar') }}</span>
+                </div>
+                <div class="metric-item">
+                  <span class="metric-label">Desviación:</span>
+                  <span class="metric-value">{{ getDesviacionVarianzaFormateada('sinAsignar') }}</span>
+                </div>
+                <div class="metric-item">
+                  <span class="metric-label">Coef. Variación:</span>
+                  <span class="metric-value">{{ getCoeficienteVariacionFormateado('sinAsignar') }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Gráfico Radar de Varianza -->
+          <div class="chart-container" style="height: 400px;">
+            <canvas id="graficoVarianza"></canvas>
+          </div>
+          
+          <!-- Interpretación -->
+          <div class="variance-interpretation">
+            <h5><i class="fas fa-lightbulb me-2"></i>Interpretación del Análisis de Varianza</h5>
+            <div class="interpretation-content">
+              @if (datosVarianza.coeficienteVariacion.asignadas < 30) {
+                <p><i class="fas fa-check-circle text-success me-2"></i>
+                   <strong>Distribución de materias asignadas:</strong> Baja variabilidad (CV: {{ getCoeficienteVariacionFormateado('asignadas') }}). 
+                   La asignación de materias es relativamente equilibrada entre áreas.</p>
+              } @else {
+                <p><i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                   <strong>Distribución de materias asignadas:</strong> Alta variabilidad (CV: {{ getCoeficienteVariacionFormateado('asignadas') }}). 
+                   Existe una distribución desigual de materias asignadas entre áreas.</p>
+              }
+              
+              @if (datosVarianza.coeficienteVariacion.sinAsignar < 50) {
+                <p><i class="fas fa-info-circle text-info me-2"></i>
+                   <strong>Materias sin asignar:</strong> Variabilidad moderada (CV: {{ getCoeficienteVariacionFormateado('sinAsignar') }}). 
+                   La distribución de materias pendientes es relativamente uniforme.</p>
+              } @else {
+                <p><i class="fas fa-times-circle text-danger me-2"></i>
+                   <strong>Materias sin asignar:</strong> Alta variabilidad (CV: {{ getCoeficienteVariacionFormateado('sinAsignar') }}). 
+                   Algunas áreas concentran significativamente más materias sin asignar que otras.</p>
+              }
+            </div>
           </div>
         </div>
       }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { LocalStorageService } from './local-storage.service';
+import { LocalStorageService, MateriaLocal } from './local-storage.service';
 import { Materia, DocenteSimple } from './materias.service';
 
 @Injectable({
@@ -39,7 +39,13 @@ export class MateriasLocalService {
     return new Observable(observer => {
       // Crear una copia sin el docenteId que es manejado por asignaciones
       const { docenteId, docenteNombre, docenteLegajo, ...materiaData } = materia;
-      const success = this.localStorageService.updateMateria(id, materiaData);
+      
+      // Convertir valores null a undefined para compatibilidad con MateriaLocal
+      const cleanedMateriaData = Object.fromEntries(
+        Object.entries(materiaData).map(([key, value]) => [key, value === null ? undefined : value])
+      ) as Partial<MateriaLocal>;
+      
+      const success = this.localStorageService.updateMateria(id, cleanedMateriaData);
       if (success) {
         const materiaActualizada = this.localStorageService.getMateriaById(id);
         observer.next(materiaActualizada!);

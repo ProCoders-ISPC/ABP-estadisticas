@@ -38,13 +38,14 @@ import { CommonModule } from '@angular/common';
     
     .barras-container {
       display: flex;
-      align-items: end;
+      align-items: flex-end;
       justify-content: space-around;
       height: 300px;
       border-bottom: 2px solid #34495e;
       border-left: 2px solid #34495e;
       padding: 20px;
       gap: 10px;
+      position: relative;
     }
     
     .barra-item {
@@ -52,13 +53,16 @@ import { CommonModule } from '@angular/common';
       flex-direction: column;
       align-items: center;
       min-width: 60px;
+      height: 100%;
+      justify-content: flex-end;
     }
     
     .barra-wrapper {
       height: 250px;
       display: flex;
-      align-items: end;
+      align-items: flex-end;
       width: 100%;
+      position: relative;
     }
     
     .barra {

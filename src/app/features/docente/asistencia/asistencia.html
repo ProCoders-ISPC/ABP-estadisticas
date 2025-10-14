@@ -1,0 +1,231 @@
+<div class="asistencia-container">
+  <h2>📋 Toma de Asistencia</h2>
+  
+  <!-- Selector de materia y fecha -->
+  <div class="form-section">
+    <div class="form-row">
+      <div class="form-group">
+        <label for="materiaSelect">Materia</label>
+        <select 
+          id="materiaSelect" 
+          class="form-control" 
+          [(ngModel)]="materiaSeleccionada" 
+          (change)="cargarEstudiantes()"
+        >
+          <option [ngValue]="null">Seleccione una materia</option>
+          @for (materia of materias; track materia.id) {
+            <option [ngValue]="materia">{{ materia.nombre }} ({{ materia.codigo }})</option>
+          }
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="fechaInput">Fecha</label>
+        <input 
+          type="date" 
+          id="fechaInput" 
+          class="form-control" 
+          [(ngModel)]="fechaSeleccionada"
+          [max]="fechaHoy"
+          (change)="cargarEstudiantes()"
+        />
+      </div>
+    </div>
+  </div>
+
+  @if (cargando) {
+    <div class="loading-indicator">
+      <div class="spinner"></div>
+      <p>Cargando información...</p>
+    </div>
+  }
+
+  @if (error) {
+    <div class="alert alert-error">
+      <i class="fas fa-exclamation-circle"></i>
+      {{ error }}
+    </div>
+  }
+
+  @if (mensaje) {
+    <div class="alert alert-success">
+      <i class="fas fa-check-circle"></i>
+      {{ mensaje }}
+    </div>
+  }
+
+  @if (estudiantes.length > 0 && materiaSeleccionada && fechaSeleccionada) {
+    <div class="estudiantes-section">
+      <div class="section-header">
+        <h3>
+          <i class="fas fa-users"></i>
+          Estudiantes de {{ materiaSeleccionada.nombre }}
+          <span class="fecha-badge">{{ fechaSeleccionada | date: 'dd/MM/yyyy' }}</span>
+        </h3>
+      </div>
+
+      <div class="table-container">
+        <table class="estudiantes-table">
+          <thead>
+            <tr>
+              <th>Legajo</th>
+              <th>Nombre del Estudiante</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (estudiante of estudiantes; track estudiante.id) {
+              <tr>
+                <td class="legajo">{{ estudiante.legajo }}</td>
+                <td class="nombre">{{ estudiante.nombre }}</td>
+                <td class="estado">
+                  <div class="radio-group">
+                    <label class="radio-option presente">
+                      <input 
+                        type="radio" 
+                        [name]="'estado_' + estudiante.id"
+                        value="PRESENTE"
+                        [(ngModel)]="estudiante.estado">
+                      <span class="radio-custom"></span>
+                      Presente
+                    </label>
+                    <label class="radio-option ausente">
+                      <input 
+                        type="radio" 
+                        [name]="'estado_' + estudiante.id"
+                        value="AUSENTE"
+                        [(ngModel)]="estudiante.estado">
+                      <span class="radio-custom"></span>
+                      Ausente
+                    </label>
+                    <label class="radio-option tardanza">
+                      <input 
+                        type="radio" 
+                        [name]="'estado_' + estudiante.id"
+                        value="TARDANZA"
+                        [(ngModel)]="estudiante.estado">
+                      <span class="radio-custom"></span>
+                      Tardanza
+                    </label>
+                  </div>
+                </td>
+                <td>
+                  @if (estudiante.asistenciaId) {
+                    <div class="action-buttons">
+                      <button 
+                        class="btn btn-sm btn-warning" 
+                        (click)="editarAsistencia({
+                          id: estudiante.asistenciaId,
+                          estudianteId: estudiante.id,
+                          estudianteNombre: estudiante.nombre,
+                          materiaId: materiaSeleccionada!.id,
+                          materiaNombre: materiaSeleccionada!.nombre,
+                          fecha: fechaSeleccionada,
+                          estado: estudiante.estado!,
+                          observaciones: ''
+                        })"
+                        title="Editar">
+                        <i class="fas fa-edit"></i>
+                      </button>
+                      <button 
+                        class="btn btn-sm btn-danger" 
+                        (click)="eliminarAsistencia(estudiante.asistenciaId)"
+                        title="Eliminar">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="save-section">
+        <button 
+          class="btn btn-primary btn-lg"
+          (click)="guardarAsistencia()"
+          [disabled]="guardando || !hayEstudiantesConEstado()"
+        >
+          @if (guardando) {
+            <div class="spinner-sm"></div>
+            Guardando...
+          } @else {
+            <i class="fas fa-save"></i>
+            Guardar Asistencia
+          }
+        </button>
+      </div>
+    </div>
+  }
+
+  @if (materiaSeleccionada && fechaSeleccionada && estudiantes.length === 0 && !cargando) {
+    <div class="empty-state">
+      <div class="empty-icon">
+        <i class="fas fa-user-slash"></i>
+      </div>
+      <h3>Sin estudiantes registrados</h3>
+      <p>No hay estudiantes asignados a esta materia o no se encontraron registros para la fecha seleccionada.</p>
+    </div>
+  }
+
+  <!-- Modal de Edición -->
+  @if (mostrarModalEditar && asistenciaSeleccionada) {
+    <div class="modal-overlay" (click)="cerrarModalEditar()">
+      <div class="modal-content-edit" (click)="$event.stopPropagation()">
+        <div class="modal-header-edit">
+          <h3><i class="fas fa-edit me-2"></i>Editar Asistencia</h3>
+          <button class="btn-close" (click)="cerrarModalEditar()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="modal-body-edit">
+          <div class="form-group">
+            <label>Estudiante:</label>
+            <input type="text" 
+                   [value]="asistenciaSeleccionada.estudianteNombre" 
+                   disabled 
+                   class="form-control">
+          </div>
+          
+          <div class="form-group">
+            <label>Fecha:</label>
+            <input type="date" 
+                   [(ngModel)]="asistenciaSeleccionada.fecha" 
+                   class="form-control">
+          </div>
+          
+          <div class="form-group">
+            <label>Estado:</label>
+            <select [(ngModel)]="asistenciaSeleccionada.estado" class="form-control">
+              <option value="PRESENTE">Presente</option>
+              <option value="AUSENTE">Ausente</option>
+              <option value="TARDANZA">Tardanza</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label>Observaciones:</label>
+            <textarea 
+              [(ngModel)]="asistenciaSeleccionada.observaciones" 
+              class="form-control"
+              rows="3"
+              placeholder="Agregar observaciones..."></textarea>
+          </div>
+        </div>
+        
+        <div class="modal-footer-edit">
+          <button class="btn btn-secondary" (click)="cerrarModalEditar()">
+            <i class="fas fa-times me-2"></i>Cancelar
+          </button>
+          <button class="btn btn-primary" (click)="guardarEdicion()">
+            <i class="fas fa-save me-2"></i>Guardar Cambios
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

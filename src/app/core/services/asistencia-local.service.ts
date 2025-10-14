@@ -60,4 +60,9 @@ export class AsistenciaLocalService {
 
     return of(resumen);
   }
+
+  getAllAsistencias(): Observable<Asistencia[]> {
+    const asistencias = this.localStorageService.getAsistencias();
+    return of(asistencias as Asistencia[]);
+  }
 }
