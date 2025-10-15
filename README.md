@@ -2,246 +2,225 @@
 
 ## 🎯 ¿Qué es ProfeSort?
 
-ProfeSort es un sistema de gestión educativa que permite administrar docentes, materias, estudiantes y ver estadísticas en tiempo real.
-
+ProfeSort es un sistema de gestión educativa desarrollado con Angular, que permite administrar docentes, materias, estudiantes y estadísticas académicas en tiempo real.
+Su objetivo es facilitar la organización institucional, el seguimiento de la carga docente y la visualización de datos mediante paneles dinámicos e interactivos.
 ---
 
-## 🚀 Cómo Acceder al Sistema
+⚙️ Instalación y Ejecución del Proyecto
+🔧 Requisitos Previos
 
-### 1. Abrir la Aplicación
-1. Abrir tu navegador web (Chrome, Firefox, Edge, etc.)
-2. Escribir en la barra de direcciones: **http://localhost:4200**
-3. Presionar Enter
+Tener instalado Node.js y Angular CLI (versión 20.1.6 o superior).
 
----
+Contar con un entorno de desarrollo preparado (VS Code, WebStorm, etc.).
 
-## 👤 Usuarios del Sistema
+🚀 Iniciar el servidor de desarrollo
 
-### Administrador Principal
-Para acceder a todos los paneles de administración, usa estas credenciales:
+Para iniciar el servidor local, ejecutá en la terminal:
 
 ```
-📧 Email: admin@profesort.com
-🔐 Contraseña: Admin123
+npm install
 ```
 
-### Docentes de Ejemplo
-Puedes probar también con estas cuentas de docentes:
+Y luego:
 
 ```
-📧 Email: karina.quinteros@profesort.com
-🔐 Contraseña: Docente123
-
-📧 Email: juan.sanchez@profesort.com
-🔐 Contraseña: Docente123
+ng serve
 ```
+Una vez que el servidor esté corriendo, abrí tu navegador y navegá a:
 
----
+👉 http://localhost:4200/
 
-## 📊 Paneles Disponibles
+La aplicación se recargará automáticamente cada vez que modifiques los archivos fuente.
 
-### 1️⃣ Panel de Inicio de Sesión
 
-**¿Cómo entrar?**
-1. En la pantalla de inicio, ingresa tu email
-2. Ingresa tu contraseña
-3. Puedes hacer clic en el ícono del ojo 👁️ para ver tu contraseña mientras la escribes
-4. Haz clic en **"Iniciar Sesión"**
 
-**¿Olvidaste tu contraseña?**
-1. Haz clic en **"¿Olvidaste tu contraseña?"**
-2. Ingresa tu email
-3. Responde la pregunta secreta
-4. Crea una nueva contraseña
-5. ¡Listo! Ya puedes iniciar sesión con tu nueva contraseña
+🧭 Uso del Sistema ProfeSort
+🔐 Acceso al sistema
 
----
+Abrí tu navegador web (Chrome, Firefox, Edge, etc.).
 
-### 2️⃣ Panel de Informes y Estadísticas
+En la barra de direcciones, escribí http://localhost:4200/
 
-**¿Cómo ver las estadísticas?**
-1. Inicia sesión como **Administrador**
-2. En el menú lateral, haz clic en **"Informes"**
-3. Verás un selector en la parte superior
-4. Selecciona el tipo de informe que deseas ver:
-   - **Distribución de Docentes por Área**: Muestra cuántos docentes hay en cada área
-   - **Carga Académica por Docente**: Muestra cuántas materias tiene cada docente
-   - **Distribución de Materias**: Muestra las materias por área
-   - **Estudiantes y Asistencia**: Muestra información sobre asistencias
+Presioná Enter para acceder a la aplicación.
 
-**¿Qué puedo ver?**
-- 📊 **Gráficos de barras coloridos** con la información
-- 📈 **Estadísticas resumidas** (promedios, totales, etc.)
-- 📋 **Tablas con datos detallados**
-- 🎯 **Interpretaciones automáticas** de los datos
+👤 Usuarios disponibles
 
----
+Administrador:
 
-### 3️⃣ Panel de Docentes
+📧 admin@profesort.com
 
-**¿Cómo ver los docentes?**
-1. Inicia sesión como **Administrador**
-2. En el menú lateral, haz clic en **"Docentes"**
-3. Verás una lista con todos los docentes registrados
+🔐 Admin123
 
-**¿Qué puedo hacer?**
-- 👀 **Ver información** de cada docente (nombre, email, teléfono, área)
-- 🔍 **Buscar** un docente por nombre
-- 🎨 **Filtrar** por área (Exactas, Sociales, Lengua, etc.)
-- ✏️ **Editar** la información de un docente (clic en botón "Editar")
-- 📚 **Ver materias asignadas** a cada docente
+Docentes de ejemplo:
 
-**Ejemplo de uso:**
-1. Busca "Karina" en el buscador
-2. Verás a Karina del Valle Quinteros
-3. Haz clic en **"Editar"**
-4. Puedes cambiar su teléfono o email
-5. Haz clic en **"Guardar"**
-6. ¡Los cambios se guardan automáticamente!
+karina.quinteros@profesort.com / Docente123
 
----
+juan.sanchez@profesort.com / Docente123
 
-### 4️⃣ Panel de Materias
+🧩 Paneles Principales del Sistema
+1️⃣ Inicio de Sesión
 
-**¿Cómo ver las materias?**
-1. Inicia sesión como **Administrador**
-2. En el menú lateral, haz clic en **"Materias"**
-3. Verás una lista con todas las materias
+Ingresá tu email y contraseña.
 
-**¿Qué puedo hacer?**
-- 👀 **Ver todas las materias** con sus códigos y áreas
-- ➕ **Crear nueva materia** (clic en botón "Nueva Materia")
-- ✏️ **Editar materia** (cambiar nombre, código, docente asignado)
-- 🗑️ **Eliminar materia** (con confirmación)
-- 👨‍🏫 **Asignar o cambiar docente** de la materia
+Usá el ícono 👁️ para ver la contraseña mientras escribís.
 
-**Cómo crear una materia nueva:**
-1. Haz clic en **"Nueva Materia"**
-2. Completa el formulario:
-   - Nombre: Ejemplo "Matemática I"
-   - Código: Ejemplo "MAT101"
-   - Área: Selecciona del menú desplegable
-   - Docente: Busca y selecciona un docente
-3. Haz clic en **"Guardar"**
-4. ¡La materia aparecerá en la lista!
+Clic en “Iniciar Sesión”.
 
----
+¿Olvidaste tu contraseña?
 
-### 5️⃣ Panel de Estudiantes
+Clic en “¿Olvidaste tu contraseña?”
 
-**¿Cómo ver los estudiantes?**
-1. Inicia sesión como **Administrador**
-2. En el menú lateral, haz clic en **"Estudiantes"**
-3. Verás una lista con todos los estudiantes
+Ingresá tu email, respondé la pregunta secreta y creá una nueva contraseña.
 
-**¿Qué puedo hacer?**
-- 👀 **Ver información** de cada estudiante
-- ➕ **Registrar nuevo estudiante**
-- ✏️ **Editar datos** del estudiante
-- 🔍 **Buscar** estudiantes
-- 📊 **Ver estadísticas** de asistencia
+2️⃣ Panel de Informes y Estadísticas
 
----
+Iniciá sesión como Administrador.
 
-## 🎨 Entendiendo los Gráficos
+En el menú lateral, seleccioná “Informes”.
 
-### Gráfico de Barras
-- **Barras más altas** = Mayor cantidad
-- **Colores diferentes** = Diferentes categorías
-- **Pasa el mouse** sobre una barra para ver detalles
-- **Línea base** = Todos los valores parten desde cero
+Elegí el tipo de informe que querés ver:
 
-### Tarjetas de Estadísticas
-- 📦 **Tarjetas grandes con números** = Resumen rápido
-- 🎯 **Verde**: Datos positivos
-- ⚠️ **Amarillo**: Advertencias
-- ℹ️ **Azul**: Información general
+Distribución de docentes por área.
 
----
+Carga académica por docente.
 
-## 🔄 Cambios y Guardado
+Distribución de materias.
 
-### ⚡ Guardado Automático
-- Todos los cambios se guardan **automáticamente**
-- No necesitas hacer clic en "Guardar" adicional
-- Los datos permanecen incluso si cierras el navegador
+Asistencia de estudiantes.
 
-### ✅ Confirmaciones
-- Cuando elimines algo, te pedirá confirmar
-- Siempre lee el mensaje antes de confirmar
-- Puedes cancelar en cualquier momento
+Incluye:
 
----
+📊 Gráficos interactivos.
 
-## 📱 Consejos de Uso
+📈 Estadísticas resumidas.
 
-### ✨ Mejores Prácticas
+📋 Tablas de datos.
 
-1. **Usa el buscador**: En lugar de desplazarte por listas largas, busca directamente
-2. **Filtra por área**: Si buscas algo específico, usa los filtros
-3. **Revisa las estadísticas regularmente**: El panel de informes se actualiza automáticamente
-4. **Guarda los cambios**: Siempre haz clic en "Guardar" cuando edites
+🎯 Interpretaciones automáticas.
 
-### 🔍 Navegación Rápida
+3️⃣ Panel de Docentes
 
-- **Menú lateral**: Haz clic en cualquier opción para cambiar de panel
-- **Botón "Inicio"**: Te lleva a la página principal
-- **Botón "Cerrar Sesión"**: Sal del sistema de forma segura
+Permite:
 
----
+👀 Ver todos los docentes.
 
-## ❓ Preguntas Frecuentes
+🔍 Buscar por nombre.
 
-### ¿Cómo veo los gráficos actualizados?
-1. Ve al panel de **Informes**
-2. Selecciona el tipo de informe
-3. Los gráficos se generan automáticamente con los datos más recientes
+🎨 Filtrar por área.
 
-### ¿Puedo cambiar el docente de una materia?
-Sí, ve al panel de **Materias**, haz clic en **Editar** en la materia deseada, busca el nuevo docente y guarda los cambios.
+✏️ Editar datos (nombre, email, teléfono, área).
 
-### ¿Los cambios se guardan cuando cierro el navegador?
-Sí, todos los cambios se guardan automáticamente en tu navegador y permanecen aunque lo cierres.
+📚 Consultar materias asignadas.
 
-### ¿Puedo registrar nuevos usuarios?
-Sí, hay una página de **Registro** donde puedes crear nuevos usuarios. Estos aparecerán en el panel de Estudiantes.
+4️⃣ Panel de Materias
 
-### ¿Qué hago si veo un mensaje de error?
-- Lee el mensaje de error (suele indicar qué falta)
-- Verifica que hayas completado todos los campos obligatorios
-- Si el problema persiste, intenta recargar la página (F5)
+Permite:
 
----
+➕ Crear nuevas materias.
 
-## 🎯 Atajos de Teclado
+✏️ Editar código, nombre o docente.
 
-- **F5**: Recargar la página
-- **Ctrl + F**: Buscar en la página actual
-- **Escape**: Cerrar ventanas emergentes (modales)
+🗑️ Eliminar materias con confirmación.
 
----
+👨‍🏫 Asignar o cambiar docentes.
 
-## 📞 ¿Necesitas Ayuda?
+5️⃣ Panel de Estudiantes
 
-Si tienes problemas con el sistema:
+Podés:
 
-1. **Recarga la página** (F5)
-2. **Verifica tu conexión** a internet
-3. **Cierra y vuelve a abrir** el navegador
-4. **Contacta al administrador** del sistema
+👀 Ver la lista completa.
 
----
+➕ Registrar nuevos estudiantes.
 
-## 🎉 ¡Listo para Empezar!
+✏️ Editar información.
 
-Ahora tienes todo lo necesario para usar el sistema ProfeSort. 
+📊 Ver estadísticas de asistencia.
 
-**Recuerda:**
-- Usuario Admin: `admin@profesort.com` / `Admin123`
-- Los datos se guardan automáticamente
-- Los gráficos se actualizan en tiempo real
-- Puedes explorar sin miedo, ¡no romperás nada!
+🎨 Interpretación de Gráficos
 
----
+Gráfico de Barras: Barras más altas = mayor cantidad.
+
+Colores: indican distintas categorías.
+
+Tarjetas de resumen: muestran totales, promedios o alertas.
+
+🎯 Verde = positivo
+
+⚠️ Amarillo = advertencia
+
+ℹ️ Azul = informativo
+
+🔄 Guardado y Confirmaciones
+
+⚡ Guardado automático: los cambios se guardan sin presionar “Guardar”.
+
+✅ Confirmaciones: el sistema pide confirmación antes de eliminar datos.
+
+📱 Consejos de uso
+
+Usá el buscador para encontrar docentes o materias rápidamente.
+
+Filtrá por área para agilizar la búsqueda.
+
+Revisá los informes periódicamente: los datos se actualizan en tiempo real.
+
+Navegá con confianza: el sistema es estable y seguro.
+
+❓ Preguntas Frecuentes
+
+¿Cómo actualizo los gráficos?
+Entrá al panel de Informes. Los gráficos se actualizan automáticamente.
+
+¿Puedo cambiar el docente de una materia?
+Sí. Editá la materia, seleccioná el nuevo docente y guardá.
+
+¿Se guardan los cambios al cerrar el navegador?
+Sí, el sistema guarda automáticamente.
+
+¿Puedo registrar nuevos usuarios?
+Sí, desde la página de Registro.
+
+¿Qué hago si aparece un error?
+
+Leé el mensaje del sistema.
+
+Verificá los campos obligatorios.
+
+Recargá la página (F5) o reiniciá el navegador.
+
+🎯 Atajos de Teclado
+
+F5: recargar la página.
+
+Ctrl + F: buscar texto en la página.
+
+Escape: cerrar ventanas emergentes.
+
+📞 Soporte y ayuda
+
+Si tenés problemas:
+
+Verificá tu conexión a Internet.
+
+Recargá la página (F5).
+
+Cerrá y volvé a abrir el navegador.
+
+Contactá al administrador del sistema.
+
+🎉 ¡Listo para usar ProfeSort!
+
+Recordá:
+
+Usuario administrador: admin@profesort.com / Admin123
+
+Los cambios se guardan automáticamente.
+
+Los gráficos se actualizan en tiempo real.
+
+Podés explorar sin miedo: el sistema es seguro y estable.
+
+💡 ProfeSort — La gestión educativa más clara, rápida y eficiente. 🚀
+
 
 **¡Que disfrutes usando ProfeSort! 🚀**
