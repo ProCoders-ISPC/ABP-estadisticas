@@ -2,18 +2,21 @@
 
 ## 🎯 ¿Qué es ProfeSort?
 
+---
 ProfeSort es un sistema de gestión educativa desarrollado con Angular, que permite administrar docentes, materias, estudiantes y estadísticas académicas en tiempo real.
 Su objetivo es facilitar la organización institucional, el seguimiento de la carga docente y la visualización de datos mediante paneles dinámicos e interactivos.
 ---
 
-⚙️ Instalación y Ejecución del Proyecto
-🔧 Requisitos Previos
+## ⚙️ Instalación y Ejecución del Proyecto
+## 🔧 Requisitos Previos
 
 Tener instalado Node.js y Angular CLI (versión 20.1.6 o superior).
 
 Contar con un entorno de desarrollo preparado (VS Code, WebStorm, etc.).
 
-🚀 Iniciar el servidor de desarrollo
+
+
+## 🚀 Iniciar el servidor de desarrollo
 
 Para iniciar el servidor local, ejecutá en la terminal:
 
@@ -34,16 +37,14 @@ La aplicación se recargará automáticamente cada vez que modifiques los archiv
 
 
 
-🧭 Uso del Sistema ProfeSort
-🔐 Acceso al sistema
+## 🧭 Uso del Sistema ProfeSort
+## 🔐 Acceso al sistema
 
 Abrí tu navegador web (Chrome, Firefox, Edge, etc.).
-
 En la barra de direcciones, escribí http://localhost:4200/
-
 Presioná Enter para acceder a la aplicación.
 
-👤 Usuarios disponibles
+### 👤 Usuarios disponibles
 
 Administrador:
 
@@ -57,8 +58,9 @@ karina.quinteros@profesort.com / Docente123
 
 juan.sanchez@profesort.com / Docente123
 
-🧩 Paneles Principales del Sistema
-1️⃣ Inicio de Sesión
+## 🧩 Paneles Principales del Sistema
+
+### 1️⃣ Inicio de Sesión
 
 Ingresá tu email y contraseña.
 
@@ -72,7 +74,7 @@ Clic en “¿Olvidaste tu contraseña?”
 
 Ingresá tu email, respondé la pregunta secreta y creá una nueva contraseña.
 
-2️⃣ Panel de Informes y Estadísticas
+### 2️⃣ Panel de Informes y Estadísticas
 
 Iniciá sesión como Administrador.
 
@@ -98,7 +100,7 @@ Incluye:
 
 🎯 Interpretaciones automáticas.
 
-3️⃣ Panel de Docentes
+### 3️⃣ Panel de Docentes
 
 Permite:
 
@@ -150,7 +152,7 @@ Tarjetas de resumen: muestran totales, promedios o alertas.
 
 ℹ️ Azul = informativo
 
-🔄 Guardado y Confirmaciones
+### 🔄 Guardado y Confirmaciones
 
 ⚡ Guardado automático: los cambios se guardan sin presionar “Guardar”.
 
@@ -166,7 +168,7 @@ Revisá los informes periódicamente: los datos se actualizan en tiempo real.
 
 Navegá con confianza: el sistema es estable y seguro.
 
-❓ Preguntas Frecuentes
+## ❓ Preguntas Frecuentes
 
 ¿Cómo actualizo los gráficos?
 Entrá al panel de Informes. Los gráficos se actualizan automáticamente.
@@ -181,14 +183,11 @@ Sí, el sistema guarda automáticamente.
 Sí, desde la página de Registro.
 
 ¿Qué hago si aparece un error?
-
 Leé el mensaje del sistema.
-
 Verificá los campos obligatorios.
-
 Recargá la página (F5) o reiniciá el navegador.
 
-🎯 Atajos de Teclado
+## 🎯 Atajos de Teclado
 
 F5: recargar la página.
 
@@ -196,7 +195,7 @@ Ctrl + F: buscar texto en la página.
 
 Escape: cerrar ventanas emergentes.
 
-📞 Soporte y ayuda
+## 📞 Soporte y ayuda
 
 Si tenés problemas:
 
@@ -208,7 +207,8 @@ Cerrá y volvé a abrir el navegador.
 
 Contactá al administrador del sistema.
 
-🎉 ¡Listo para usar ProfeSort!
+--- 
+## 🎉 ¡Listo para usar ProfeSort!
 
 Recordá:
 
@@ -220,7 +220,6 @@ Los gráficos se actualizan en tiempo real.
 
 Podés explorar sin miedo: el sistema es seguro y estable.
 
-💡 ProfeSort — La gestión educativa más clara, rápida y eficiente. 🚀
 
 
-**¡Que disfrutes usando ProfeSort! 🚀**
+# **¡Que disfrutes usando ProfeSort! 🚀**
