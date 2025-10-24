@@ -5,6 +5,7 @@ import { EstudiantesComponent } from './admin-estudiantes/estudiantes';
 import { Materias } from './admin-materias/materias';
 import { AdminAsistenciaComponent } from './admin-asistencia/admin-asistencia';
 import { AdminGuard } from '../../core/guards/guards';
+import { GestionEstudiantesComponent } from './admin-gestion-estudiantes/gestion-estudiantes.component';
 
 export const ADMIN_ROUTES: Routes = [
   {
@@ -12,12 +13,19 @@ export const ADMIN_ROUTES: Routes = [
     component: AdminLayout,
     canActivate: [AdminGuard], 
     children: [
-    { path: '', loadComponent: () => import('./inicio/inicio').then(m => m.AdminInicio) },
-    { path: 'docentes', component: AdminDocenteComponent },
-    { path: 'estudiantes', component: EstudiantesComponent },
-    { path: 'materias', component: Materias },
-    { path: 'asistencia', component: AdminAsistenciaComponent },
-    { path: 'informes', loadComponent: () => import('./informes/informes').then(m => m.InformesComponent) }
+      { path: '', loadComponent: () => import('./inicio/inicio').then(m => m.AdminInicio) },
+      { path: 'docentes', component: AdminDocenteComponent },
+      {
+        path: 'estudiantes',
+        component: GestionEstudiantesComponent,
+        children: [
+          { path: '', redirectTo: 'listado', pathMatch: 'full' },
+          { path: 'listado', component: EstudiantesComponent },
+          { path: 'asistencia', component: AdminAsistenciaComponent },
+        ]
+      },
+      { path: 'materias', component: Materias },
+      { path: 'informes', loadComponent: () => import('./informes/informes').then(m => m.InformesComponent) }
     ],
   },
 ];

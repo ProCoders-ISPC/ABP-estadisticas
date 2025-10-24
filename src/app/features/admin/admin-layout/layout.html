@@ -9,41 +9,42 @@
         <div class="menu-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
           <a routerLink="/admin" class="d-flex align-items-center text-decoration-none text-reset w-100">
             <div class="menu-icon">
-              <img src="./img/icons/profesort_icon.svg" alt="Icono Inicio" height="20">
+              <img src="assets/img/img/icons/profesort_icon.svg" alt="Icono Inicio" height="20">
             </div>
             <div>Inicio</div>
           </a>
         </div>
         <div class="menu-item" routerLinkActive="active">
           <a routerLink="/admin/docentes" class="d-flex align-items-center text-decoration-none text-reset w-100">
-            <div class="menu-icon">
-              <img src="./img/icons/teacher_icon.svg" alt="Icono Docentes" height="20">
+             <div class="menu-icon">
+              <img src="assets/img/img/icons/teacher_icon.svg" alt="Icono Docentes" height="20">
             </div>
-            <div>Docentes</div>
+            <div>Gestión de Docentes</div>
           </a>
         </div>
         <div class="menu-item" routerLinkActive="active">
           <a routerLink="/admin/materias" class="d-flex align-items-center text-decoration-none text-reset w-100">
             <div class="menu-icon">
-              <img src="./img/icons/subjects_icon.svg" alt="Icono Materias" height="20">
+              <img src="assets/img/img/icons/subjects_icon.svg" alt="Icono Materias" height="20">
             </div>
-            <div>Materias</div>
+            <div>Gestión de Materias</div>
           </a>
         </div>
         <div class="menu-item" routerLinkActive="active">
           <a routerLink="/admin/estudiantes" class="d-flex align-items-center text-decoration-none text-reset w-100">
             <div class="menu-icon">
-              <img src="./img/icons/credential_icon.svg" alt="Icono Estudiantes" height="20">
+              <img src="assets/img/img/icons/credential_icon.svg" alt="Icono Estudiantes" height="20">
             </div>
-            <div>Estudiantes</div>
+            <div>Gestión de Estudiantes y Cursos</div>
           </a>
         </div>
+
         <div class="menu-item" routerLinkActive="active">
           <a routerLink="/admin/informes" class="d-flex align-items-center text-decoration-none text-reset w-100">
             <div class="menu-icon">
-              <img src="./img/icons/metrics_icon.svg" alt="Icono Informes" height="20">
+              <img src="assets/img/img/icons/metrics_icon.svg" alt="Icono Informes" height="20">
             </div>
-            <div>Informes</div>
+            <div>Dashboard Estadístico</div>
           </a>
         </div>
       </nav>
@@ -53,7 +54,7 @@
         <button class="responsive-toggle" id="sidebarToggle" (click)="toggleSidebar()">
           <i class="fas fa-bars"></i>
         </button>
-        <div class="page-title">Panel de Control</div>
+        
         <div class="user-profile">
           <button class="btn-home-header" (click)="irAlHome()" title="Ir al sitio web">
             <i class="fas fa-home"></i>

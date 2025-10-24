@@ -1,8 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, forkJoin } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { AsistenciaLocalService } from './asistencia-local.service';
+import { MateriasService, Materia } from './materias.service';
+import { EstudiantesService, Estudiante } from './estudiantes.service';
 
 export interface Asistencia {
   id: number;
@@ -48,10 +51,16 @@ export interface ResumenAsistencia {
 export class AsistenciaService {
   private apiUrl = `${environment.apiUrl}/asistencias`;
   private asistenciaLocalService!: AsistenciaLocalService;
+  private materiasService!: MateriasService;
+  private estudiantesService!: EstudiantesService;
 
   constructor(private http: HttpClient) {
     this.asistenciaLocalService = inject(AsistenciaLocalService);
+    this.materiasService = inject(MateriasService);
+    this.estudiantesService = inject(EstudiantesService);
   }
+
+
 
   getAsistenciasByMateria(materiaId: number): Observable<Asistencia[]> {
     if (environment.useLocalStorage) {
@@ -157,4 +166,32 @@ export class AsistenciaService {
       return this.http.get<Asistencia[]>(this.apiUrl);
     }
   }
+
+  getAllAsistenciasEnriquecidas(): Observable<AsistenciaRegistro[]> {
+    return forkJoin({
+      asistencias: this.getAllAsistencias(),
+      materias: this.materiasService.getMaterias(),
+      estudiantes: this.estudiantesService.getEstudiantes()
+    }).pipe(
+      map(({ asistencias, materias, estudiantes }) => {
+        return asistencias.map(asistencia => {
+          const materia = materias.find(m => m.id === asistencia.id_materia);
+          const estudiante = estudiantes.find(e => e.id === asistencia.id_estudiante);
+          
+          return {
+            id: asistencia.id,
+            estudianteId: asistencia.id_estudiante,
+            estudianteNombre: estudiante ? `${estudiante.nombre} ${estudiante.apellido || ''}`.trim() : 'Estudiante Desconocido',
+            materiaId: asistencia.id_materia,
+            materiaNombre: materia ? materia.nombre : 'Materia Desconocida',
+            fecha: asistencia.fecha,
+            estado: asistencia.estado,
+            observaciones: asistencia.observaciones || ''
+          };
+        });
+      })
+    );
+  }
+
+
 }

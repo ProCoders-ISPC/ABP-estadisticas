@@ -1,0 +1,221 @@
+╔════════════════════════════════════════════════════════════════════╗
+║          🎯 PROFESORT - RESET COMPLETO DE DATOS                   ║
+║              Versión 1.0 - Listo para Producción                  ║
+╚════════════════════════════════════════════════════════════════════╝
+
+
+┌────────────────────────────────────────────────────────────────────┐
+│ 🚀 CÓMO EMPEZAR EN 30 SEGUNDOS                                    │
+└────────────────────────────────────────────────────────────────────┘
+
+  1. Abre:  http://localhost:4200
+  
+  2. Presiona: F12
+  
+  3. Ve a: Console
+  
+  4. Escribe: resetData()
+  
+  5. ¡Presiona Enter!
+
+
+┌────────────────────────────────────────────────────────────────────┐
+│ 📊 QUÉ CONTIENE EL RESET                                          │
+└────────────────────────────────────────────────────────────────────┘
+
+  ✓ 1 ADMINISTRADOR
+    └─ Admin@profesort.edu con acceso completo
+  
+  ✓ 8 DOCENTES (con carga inequitativa)
+    ├─ Roberto García: 10 materias        [SOBRECARGADO]
+    ├─ Laura Fernández: 9 materias        [SOBRECARGADA]
+    ├─ Daniel Rodríguez: 1 materia        [SUBUTILIZADO]
+    ├─ Patricia Gómez: 1 materia          [SUBUTILIZADA]
+    └─ 4 Docentes más: 3-4 materias       [NORMALES]
+  
+  ✓ 20 ESTUDIANTES (con diferentes asistencias)
+    ├─ 3 Críticos: ~55% de asistencia     [ALERTAS ROJAS]
+    ├─ 2 Regulares: ~65% de asistencia    [ALERTAS NARANJAS]
+    └─ 15 Buenos: ~88% de asistencia      [DATOS DE REFERENCIA]
+  
+  ✓ 40 MATERIAS (distribuidas por área)
+    ├─ 10 EXACTAS: Matemática, Física, Química, etc.
+    ├─ 10 SOCIALES: Historia, Geografía, Economía, etc.
+    ├─ 10 NATURALES: Biología, Botánica, Ecología, etc.
+    └─ 10 HUMANIDADES: Literatura, Filosofía, Arte, etc.
+  
+  ✓ 35 ASIGNACIONES (inequitativas)
+    └─ 5 materias SIN DOCENTE ASIGNADO
+  
+  ✓ 1000+ REGISTROS DE ASISTENCIA (90 días)
+    ├─ Últimos 90 días completos
+    ├─ Múltiples estudiantes y materias
+    ├─ Estados: PRESENTE, AUSENTE, TARDANZA
+    └─ ¡Gráficos y estadísticas funcionan!
+
+
+┌────────────────────────────────────────────────────────────────────┐
+│ ⚡ ALERTAS QUE SE GENERAN (11 total)                              │
+└────────────────────────────────────────────────────────────────────┘
+
+  [CRÍTICAS] 🔴
+  ├─ Juan Manuel Pérez: 55% de asistencia
+  ├─ María del Carmen González: 52.5% de asistencia
+  └─ Carlos Alberto Ramírez: 57.5% de asistencia
+
+  [REGULARES] 🟠
+  ├─ Ana Sofía Martínez: 67.5% de asistencia
+  └─ Luis Fernando Torres: 62.5% de asistencia
+
+  [DISTRIBUCIÓN] 📊
+  ├─ Roberto García: Sobrecargado (10 materias)
+  ├─ Laura Fernández: Sobrecargada (9 materias)
+  ├─ Daniel Rodríguez: Subutilizado (1 materia)
+  └─ Patricia Gómez: Subutilizada (1 materia)
+
+  [ESTADÍSTICA] 📈
+  └─ Desviación estándar alta (σ > 2.0)
+
+  [SIN ASIGNAR] 🟡
+  └─ 5 materias sin docente asignado
+
+
+┌────────────────────────────────────────────────────────────────────┐
+│ 🎮 COMANDOS DISPONIBLES                                           │
+└────────────────────────────────────────────────────────────────────┘
+
+  ▶ resetData()
+    └─ Borra TODO y carga datos de demostración
+       (Pide confirmación antes de hacerlo)
+
+  ▶ limpiarStorage()
+    └─ Solo limpia localStorage sin recargar
+       (Útil si quieres hacer cambios manuales)
+
+
+┌────────────────────────────────────────────────────────────────────┐
+│ 📋 ESTRUCTURA DE DATOS EN LOCALSTORAGE                            │
+└────────────────────────────────────────────────────────────────────┘
+
+  'profesort_usuarios' → 29 usuarios (admin, docentes, estudiantes)
+  'profesort_materias' → 40 materias con sus áreas
+  'profesort_asignaciones' → 35 asignaciones de materias a docentes
+  'profesort_asistencias' → 1000+ registros de asistencia
+
+
+┌────────────────────────────────────────────────────────────────────┐
+│ 🎯 FUNCIONALIDADES DESPUÉS DEL RESET                             │
+└────────────────────────────────────────────────────────────────────┘
+
+  ✅ Página de Alertas
+     └─ Muestra 11 alertas diferentes
+
+  ✅ Página de Estadísticas
+     └─ Gráficos con datos reales
+     └─ Distribucion de carga
+     └─ Tasas de asistencia
+
+  ✅ Tabla de Asistencia
+     └─ 1000+ registros disponibles
+     └─ Filtrable por estudiante, materia, fecha
+
+  ✅ Gestión de Docentes
+     └─ 8 docentes con carga visible
+
+  ✅ Gestión de Estudiantes
+     └─ 20 estudiantes con asistencia registrada
+
+  ✅ Tabla de Materias
+     └─ 40 materias con diferentes estados
+
+  ✅ Asignaciones
+     └─ 35 asignaciones con 5 sin asignar
+
+
+┌────────────────────────────────────────────────────────────────────┐
+│ ⚠️ ADVERTENCIAS IMPORTANTES                                       │
+└────────────────────────────────────────────────────────────────────┘
+
+  ❌ El script BORRA TODOS los datos locales
+  ❌ No se puede deshacer (los datos se pierden)
+  ✅ Solicita confirmación antes
+  ✅ La página se recarga automáticamente
+  ✅ Puedes ejecutarlo múltiples veces sin problema
+
+
+┌────────────────────────────────────────────────────────────────────┐
+│ 🐛 TROUBLESHOOTING                                                │
+└────────────────────────────────────────────────────────────────────┘
+
+  ¿resetData() no funciona?
+  → Recarga la página (F5) y abre consola de nuevo
+
+  ¿Las alertas no aparecen?
+  → Navega a la sección de Alertas después del reset
+  → Espera 2-3 segundos para que se carguen
+
+  ¿Los gráficos están vacíos?
+  → Los datos de asistencia están cargados correctamente
+  → Verifica que las gráficas se estén renderizando
+  → Abre la consola (F12) para ver si hay errores
+
+
+┌────────────────────────────────────────────────────────────────────┐
+│ 📚 DOCUMENTACIÓN DISPONIBLE                                       │
+└────────────────────────────────────────────────────────────────────┘
+
+  📖 RESET_DATOS.md
+     └─ Guía completa con estructura de datos
+
+  📋 USAR_RESET.txt
+     └─ Instrucciones rápidas y básicas
+
+  📄 CAMBIOS_REALIZADOS.md
+     └─ Detalles técnicos y explicación de código
+
+  ⚡ QUICKSTART.md
+     └─ Versión ultra-rápida (1 minuto)
+
+  📊 MANUAL_VISUAL.txt
+     └─ Este archivo con formato visual
+
+
+┌────────────────────────────────────────────────────────────────────┐
+│ 🎓 CASOS DE USO                                                   │
+└────────────────────────────────────────────────────────────────────┘
+
+  1. ANTES DE UNA PRESENTACIÓN
+     → resetData() para mostrar todos los datos
+     → Todas las alertas activas
+     → Gráficos funcionando correctamente
+
+  2. PRUEBAS DE DESARROLLO
+     → Datos consistentes para testing
+     → Múltiples ejecuciones sin conflictos
+
+  3. DEMOSTRACIÓN DE CARACTERÍSTICAS
+     → Mostrar alertas en tiempo real
+     → Estadísticas con datos variados
+     → Tabla de asistencia completa
+
+  4. RESET DE ERRORES
+     → Si los datos se corrompen
+     → Volver a un estado conocido
+
+
+┌────────────────────────────────────────────────────────────────────┐
+│ ✨ RESUMEN RÁPIDO                                                 │
+└────────────────────────────────────────────────────────────────────┘
+
+  1. Abre DevTools (F12)
+  2. Ve a Console
+  3. Escribe: resetData()
+  4. Presiona Enter
+  5. Confirma
+  6. ¡Listo! Todos los datos cargados
+
+
+╔════════════════════════════════════════════════════════════════════╗
+║  🚀 ¡LISTO PARA MOSTRAR TODAS LAS FUNCIONALIDADES DEL SISTEMA! 🚀 ║
+╚════════════════════════════════════════════════════════════════════╝
+

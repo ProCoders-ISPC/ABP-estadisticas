@@ -1,0 +1,75 @@
+═══════════════════════════════════════════════════════════════════
+                    🔄 SCRIPT DE RESET RÁPIDO
+═══════════════════════════════════════════════════════════════════
+
+INSTRUCCIONES RÁPIDAS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Abre la aplicación en el navegador
+
+2. Presiona F12 para abrir Developer Tools
+
+3. Haz clic en la pestaña "Console" (Consola)
+
+4. Escribe el comando:
+   ┌─────────────────┐
+   │   resetData()   │
+   └─────────────────┘
+
+5. Presiona Enter
+
+6. Confirma el mensaje de advertencia
+
+7. ¡Listo! La página se recargará con todos los datos
+
+
+═══════════════════════════════════════════════════════════════════
+✅ QUÉ SE CARGA AUTOMÁTICAMENTE:
+═══════════════════════════════════════════════════════════════════
+
+✓ 1 Administrador
+✓ 8 Docentes (con carga inequitativa)
+✓ 20 Estudiantes (con diferentes asistencias)
+✓ 40 Materias
+✓ 35 Asignaciones (distribuidas desigualdadamente)
+✓ 1000+ Registros de asistencia (90 días)
+
+⚡ ALERTAS QUE SE GENERAN:
+✓ 3 alertas CRÍTICAS de asistencia
+✓ 2 alertas de asistencia REGULAR
+✓ 2 alertas de docentes SOBRECARGADOS
+✓ 2 alertas de docentes SUBUTILIZADOS
+✓ 1 alerta de DESVIACIÓN ESTÁNDAR
+✓ 1 alerta de materias SIN ASIGNAR
+
+
+═══════════════════════════════════════════════════════════════════
+⚠️ ADVERTENCIAS:
+═══════════════════════════════════════════════════════════════════
+
+❌ BORRA TODOS LOS DATOS LOCALES
+❌ NO se puede deshacer
+✅ Solicita confirmación
+✅ Recarga automáticamente
+
+
+═══════════════════════════════════════════════════════════════════
+🆘 SI ALGO FALLA:
+═══════════════════════════════════════════════════════════════════
+
+1. Recarga la página (F5)
+2. Abre la consola nuevamente (F12)
+3. Escribe resetData() de nuevo
+
+
+═══════════════════════════════════════════════════════════════════
+COMANDO ALTERNATIVO:
+═══════════════════════════════════════════════════════════════════
+
+Solo limpiar localStorage (sin recargar):
+    limpiarStorage()
+
+
+═══════════════════════════════════════════════════════════════════
+✨ ¡Listo para demostrar el sistema con todos los datos! ✨
+═══════════════════════════════════════════════════════════════════

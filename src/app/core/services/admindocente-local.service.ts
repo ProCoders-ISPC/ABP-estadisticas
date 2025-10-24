@@ -163,12 +163,22 @@ export class AdminDocenteLocalService {
       if (success) {
         const docenteActualizado = this.localStorageService.getUsuarioById(id);
         if (docenteActualizado) {
+          // Recalcular la cantidad de materias después de la actualización
+          const asignaciones = this.localStorageService.getAsignaciones()
+            .filter(a => a.id_usuario === id && a.estado === 'ACTIVO');
+          const materias = this.localStorageService.getMaterias();
+          const materiasDocente = asignaciones.map(asig => {
+            const materia = materias.find(m => m.id === asig.id_materia);
+            return materia ? materia.nombre : null;
+          }).filter(nombre => nombre !== null) as string[];
+
           observer.next({
             ...docenteActualizado,
             id_usuario: docenteActualizado.id,
             estado: docenteActualizado.is_active ? 'Activo' : 'Inactivo',
-            cantidadMaterias: 0,
-            cantidadEstudiantes: 0
+            cantidadMaterias: asignaciones.length, // Valor recalculado
+            cantidadEstudiantes: 0, // Mantener si no se usa
+            materias: materiasDocente
           } as DocenteCarga);
           observer.complete();
         }

@@ -84,7 +84,7 @@ export class AsistenciaDocenteComponent implements OnInit {
         // Mapear estudiantes con información de asistencia
         this.estudiantes = estudiantes.map((est: Estudiante) => ({
           id: est.id,
-          nombre: `${est.nombre} ${est.apellidos || ''}`,
+          nombre: `${est.nombre} ${est.apellido || ''}`,
           legajo: est.legajo || est.id.toString(),
           estado: undefined,
           asistenciaId: undefined

@@ -5,6 +5,12 @@ import { map, catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { LocalStorageService } from './local-storage.service';
 
+// Exportar servicios adicionales
+export * from './alertas.service';
+export * from './informes.service';
+export * from './asistencia.service';
+export * from './materias.service';
+
 export interface LoginRequest {
   email: string;
   password: string;

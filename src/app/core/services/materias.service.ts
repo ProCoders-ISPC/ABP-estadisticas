@@ -1,11 +1,12 @@
 
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { AsignacionesService } from './asignaciones.service';
 import { MateriasLocalService } from './materias-local.service';
-import { switchMap, map } from 'rxjs/operators';
+import { switchMap, map, tap, shareReplay, catchError } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
 
 export interface DocenteSimple {
   id: number;
@@ -39,6 +40,12 @@ export class MateriasService {
   private usersUrl = `${environment.apiUrl}/usuarios`;
   private useLocalStorage = environment.useLocalStorage;
 
+  // Cache para optimizar rendimiento
+  private materiasCache$ = new BehaviorSubject<Materia[]>([]);
+  private docentesCache$ = new BehaviorSubject<DocenteSimple[]>([]);
+  private materiasLoaded = false;
+  private docentesLoaded = false;
+
   constructor(
     private http: HttpClient,
     private asignacionesService: AsignacionesService,
@@ -47,13 +54,37 @@ export class MateriasService {
 
   /**
    * Obtener todas las materias CON datos de docentes asignados
-   * Usa el servicio de asignaciones para hacer el JOIN
+   * Con cache para optimizar rendimiento
    */
   getMaterias(): Observable<Materia[]> {
-    if (this.useLocalStorage) {
-      return this.materiasLocalService.getMaterias();
+    if (this.materiasLoaded) {
+      return this.materiasCache$.asObservable();
     }
-    return this.asignacionesService.getMateriasConDocentes();
+
+    const source$ = this.useLocalStorage 
+      ? this.materiasLocalService.getMaterias()
+      : this.asignacionesService.getMateriasConDocentes();
+
+    return source$.pipe(
+      tap(materias => {
+        this.materiasCache$.next(materias);
+        this.materiasLoaded = true;
+        console.log('📚 Materias cargadas en cache:', materias.length);
+      }),
+      catchError(error => {
+        console.error('❌ Error cargando materias:', error);
+        this.materiasCache$.next([]);
+        return of([]);
+      })
+    );
+  }
+
+  /**
+   * Refrescar cache de materias
+   */
+  refreshMaterias(): Observable<Materia[]> {
+    this.materiasLoaded = false;
+    return this.getMaterias();
   }
 
   /**
@@ -71,20 +102,36 @@ export class MateriasService {
    * Crear nueva materia (sin asignación de docente)
    */
   addMateria(materia: Omit<Materia, 'id'>): Observable<Materia> {
-    if (this.useLocalStorage) {
-      return this.materiasLocalService.addMateria(materia);
-    }
-    return this.http.post<Materia>(`${this.apiUrl}/`, materia);
+    const source$ = this.useLocalStorage 
+      ? this.materiasLocalService.addMateria(materia)
+      : this.http.post<Materia>(`${this.apiUrl}/`, materia);
+
+    return source$.pipe(
+      tap(() => {
+        this.updateCacheAfterOperation();
+        // Disparar eventos de actualización
+        window.dispatchEvent(new CustomEvent('materia-agregada'));
+        window.dispatchEvent(new CustomEvent('datos-actualizados'));
+      })
+    );
   }
 
   /**
    * Actualizar materia
    */
   updateMateria(id: number, materia: Partial<Materia>): Observable<Materia> {
-    if (this.useLocalStorage) {
-      return this.materiasLocalService.updateMateria(id, materia);
-    }
-    return this.http.patch<Materia>(`${this.apiUrl}/${id}/`, materia);
+    const source$ = this.useLocalStorage 
+      ? this.materiasLocalService.updateMateria(id, materia)
+      : this.http.patch<Materia>(`${this.apiUrl}/${id}/`, materia);
+
+    return source$.pipe(
+      tap(() => {
+        this.updateCacheAfterOperation();
+        // Disparar eventos de actualización
+        window.dispatchEvent(new CustomEvent('materia-actualizada'));
+        window.dispatchEvent(new CustomEvent('datos-actualizados'));
+      })
+    );
   }
 
   /**
@@ -93,17 +140,32 @@ export class MateriasService {
    */
   deleteMateria(id: number): Observable<void> {
     if (this.useLocalStorage) {
-      return this.materiasLocalService.deleteMateria(id);
+      return this.materiasLocalService.deleteMateria(id).pipe(
+        tap(() => {
+          this.updateCacheAfterOperation();
+          // Disparar eventos de actualización
+          window.dispatchEvent(new CustomEvent('materia-eliminada'));
+          window.dispatchEvent(new CustomEvent('datos-actualizados'));
+        })
+      );
     }
+    
     // Eliminar asignaciones primero, luego la materia
     return this.asignacionesService.getAsignacionesByMateria(id).pipe(
-      switchMap(asignaciones => {
-        const deletePromises = asignaciones.map(a => 
-          this.asignacionesService.eliminarAsignacion(a.id).toPromise()
-        );
-        return Promise.all(deletePromises);
-      }),
-      switchMap(() => this.http.delete<void>(`${this.apiUrl}/${id}/`))
+      switchMap(asignaciones => {        
+        if (asignaciones.length === 0) {
+          return of([]); // No hay asignaciones que eliminar, continuar.
+        }
+        const deleteObservables = asignaciones.map(a => this.asignacionesService.eliminarAsignacion(a.id));
+        return forkJoin(deleteObservables);
+      }),      
+      switchMap(() => this.http.delete<void>(`${this.apiUrl}/${id}/`)),
+      tap(() => {
+        this.updateCacheAfterOperation();
+        // Disparar eventos de actualización
+        window.dispatchEvent(new CustomEvent('materia-eliminada'));
+        window.dispatchEvent(new CustomEvent('datos-actualizados'));
+      })
     );
   }
 
@@ -112,10 +174,21 @@ export class MateriasService {
    * Usa la tabla de asignaciones_docentes_materias
    */
   asignarDocente(materiaId: number, docenteId: number | null): Observable<any> {
-    if (this.useLocalStorage) {
-      return this.materiasLocalService.asignarDocente(materiaId, docenteId);
-    }
-    
+    const source$ = this.useLocalStorage 
+      ? this.materiasLocalService.asignarDocente(materiaId, docenteId)
+      : this.handleAsignacionDocente(materiaId, docenteId);
+
+    return source$.pipe(
+      tap(() => {
+        this.updateCacheAfterOperation();
+        // Disparar eventos de actualización
+        window.dispatchEvent(new CustomEvent('asignacion-actualizada'));
+        window.dispatchEvent(new CustomEvent('datos-actualizados'));
+      })
+    );
+  }
+
+  private handleAsignacionDocente(materiaId: number, docenteId: number | null): Observable<any> {
     console.log('🎯 asignarDocente() llamado:', { materiaId, docenteId });
     
     // Primero obtener asignaciones actuales de esta materia específica
@@ -156,21 +229,45 @@ export class MateriasService {
   }
 
   /**
-   * Obtener lista de docentes disponibles
+   * Obtener lista de docentes disponibles con cache
    */
   getDocentes(): Observable<DocenteSimple[]> {
-    if (this.useLocalStorage) {
-      return this.materiasLocalService.getDocentes();
+    if (this.docentesLoaded) {
+      return this.docentesCache$.asObservable();
     }
-    return this.http.get<any>(`${this.usersUrl}/?id_rol=2`).pipe(
-      map(response => {
-        const docentes = response.data || [];
-        return docentes.map((docente: any) => ({
-          ...docente,
-          id_usuario: docente.id // Mapear id a id_usuario para compatibilidad
-        }));
+
+    const source$ = this.useLocalStorage 
+      ? this.materiasLocalService.getDocentes()
+      : this.http.get<any>(`${this.usersUrl}/?id_rol=2`).pipe(
+          map(response => {
+            const docentes = response.data || [];
+            return docentes.map((docente: any) => ({
+              ...docente,
+              id_usuario: docente.id // Mapear id a id_usuario para compatibilidad
+            }));
+          })
+        );
+
+    return source$.pipe(
+      tap(docentes => {
+        this.docentesCache$.next(docentes);
+        this.docentesLoaded = true;
+        console.log('👨‍🏫 Docentes cargados en cache:', docentes.length);
+      }),
+      catchError(error => {
+        console.error('❌ Error cargando docentes:', error);
+        this.docentesCache$.next([]);
+        return of([]);
       })
     );
   }
-}
 
+  /**
+   * Invalidar cache después de operaciones CRUD
+   */
+  private updateCacheAfterOperation(): void {
+    this.materiasLoaded = false;
+    // No recargar automáticamente para evitar recursión
+    // El siguiente getMaterias() lo recargará cuando sea necesario
+  }
+}

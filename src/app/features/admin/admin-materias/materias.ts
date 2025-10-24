@@ -1,12 +1,14 @@
 
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { MateriasService, Materia, DocenteSimple } from '../../../core/services/materias.service';
 import { AsignacionesService } from '../../../core/services/asignaciones.service';
 import { APP_CONFIG } from '../../../core/config/app.config';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { BannerAlertasComponent } from '../../../shared/components/banner-alertas/banner-alertas';
 
 export interface Area {
   valor: string;
@@ -20,9 +22,11 @@ export interface Area {
   standalone: true,
   templateUrl: './materias.html',
   styleUrls: ['./materias.css'],
-  imports: [CommonModule, FormsModule]
+  imports: [CommonModule, FormsModule, BannerAlertasComponent]
 })
-export class Materias {
+export class Materias implements OnDestroy {
+  private destroy$ = new Subject<void>();
+  
   // Sistema de pestañas
   pestanaActiva: 'materias' | 'areas' = 'materias';
   
@@ -32,7 +36,7 @@ export class Materias {
   alertSuccess = '';
   alertError = '';
   showEliminar = false;
-  cargandoDatos = true;
+  cargandoDatos = false;
   
   mostrarFormulario = false;
   modoEdicion = false;
@@ -80,8 +84,13 @@ export class Materias {
 
   constructor() {
     this.cargarAreas();
-    this.cargarMaterias();
+    this.initializeData();
+  }
+
+  private initializeData(): void {
+    // Cargar datos de manera optimizada
     this.cargarDocentes();
+    this.cargarMaterias();
   }
 
   // ==================== PESTAÑAS ====================
@@ -92,52 +101,53 @@ export class Materias {
   }
 
   cargarMaterias(): void {
-    console.log('🔄 Recargando materias...');
+    if (this.cargandoDatos) return;
+    
+    console.log('[Materias] Recargando materias...');
     this.cargandoDatos = true;
-    this.materiasService.getMaterias().subscribe({
-      next: (data: Materia[]) => {
-        console.log('✅ Materias cargadas:', data);
-        console.log('📊 Total materias:', data.length);
-        data.forEach((m, i) => {
-          console.log(`  Materia ${i + 1}:`, {
-            nombre: m.nombre,
-            codigo: m.codigo,
-            docenteId: m.docenteId,
-            docenteNombre: m.docenteNombre,
-            docenteLegajo: m.docenteLegajo
-          });
-        });
-        this.materias = data;
-        this.agruparMateriasPorArea(); // Actualizar contador de materias por área
-        this.cargandoDatos = false;
-      },
-      error: (err) => {
-        console.error('❌ Error cargando materias:', err);
-        this.materias = [];
-        this.cargandoDatos = false;
-        this.showError(this.errorMessages.NETWORK_ERROR);
-      }
-    });
+    this.alertError = '';
+    
+    this.materiasService.getMaterias()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: Materia[]) => {
+          console.log('[Materias] Materias cargadas con éxito.', data);
+          this.materias = data;
+          this.agruparMateriasPorArea();
+          this.cargandoDatos = false;
+        },
+        error: (err) => {
+          console.error('[Materias] Error cargando materias:', err);
+          this.materias = [];
+          this.cargandoDatos = false;
+          this.showError(this.errorMessages.NETWORK_ERROR);
+        }
+      });
   }
 
   cargarDocentes(): void {
-    this.materiasService.getDocentes().subscribe({
-      next: (data: DocenteSimple[]) => {
-        this.docentes = data;
-        this.docentesFiltrados = data;
-      },
-      error: () => {
-        this.docentes = [];
-        this.docentesFiltrados = [];
-      }
-    });
+    console.log('[Materias] Cargando docentes...');
+    this.materiasService.getDocentes()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: DocenteSimple[]) => {
+          console.log('[Materias] Docentes cargados con éxito.', data);
+          this.docentes = data;
+          this.docentesFiltrados = [...data];
+        },
+        error: (err) => {
+          console.error('[Materias] Error cargando docentes:', err);
+          this.docentes = [];
+          this.docentesFiltrados = [];
+        }
+      });
   }
 
   filtrarDocentes(): void {
     const termino = this.busquedaDocente.toLowerCase().trim();
     
     if (!termino) {
-      this.docentesFiltrados = this.docentes;
+      this.docentesFiltrados = [...this.docentes]; // Crear copia
       this.mostrarListaDocentes = false;
       return;
     }
@@ -199,6 +209,8 @@ export class Materias {
   }
 
   guardar(): void {
+    if (this.cargandoDatos) return; // Prevenir envíos múltiples
+    
     console.log('Método guardar() ejecutado');
     console.log('Modo edición:', this.modoEdicion);
     console.log('Editando ID:', this.editandoId);
@@ -206,22 +218,15 @@ export class Materias {
     console.log('Docente seleccionado:', this.docenteSeleccionado);
     
     // Validar campos requeridos usando configuración
-    console.log('Validando campos:');
-    console.log('- formData.nombre:', this.formData.nombre);
-    console.log('- formData.codigo:', this.formData.codigo);
-    console.log('- nombre.trim():', this.formData.nombre?.trim());
-    console.log('- codigo.trim():', this.formData.codigo?.trim());
-    
     if (!this.formData.nombre?.trim() || !this.formData.codigo?.trim()) {
       console.log('Error de validación: campos requeridos vacíos');
-      console.log('- Falta nombre:', !this.formData.nombre?.trim());
-      console.log('- Falta codigo:', !this.formData.codigo?.trim());
       this.showError(this.errorMessages.VALIDATION_ERROR);
       return;
     }
     
     console.log('Validación pasada, continuando...');
     this.alertError = '';
+    this.cargandoDatos = true;
 
     if (this.modoEdicion && this.editandoId) {
       console.log('Enviando actualización con datos:', this.formData);
@@ -246,11 +251,22 @@ export class Materias {
           console.log('Materia y asignación actualizadas exitosamente:', response);
           this.showMessage(this.successMessages.UPDATE_SUCCESS);
           this.resetForm();
-          this.cargarMaterias();
+          this.cargandoDatos = false;
+          
+          // Disparar eventos para actualizar informes
+          window.dispatchEvent(new CustomEvent('materia-actualizada', {
+            detail: { materiaId: this.editandoId }
+          }));
+          window.dispatchEvent(new CustomEvent('datos-actualizados', {
+            detail: { tipo: 'materia', accion: 'actualizada', id: this.editandoId }
+          }));
+          
+          // No necesitamos cargar materias manualmente, el cache se actualiza automáticamente
         },
         error: (err) => {
           console.error('Error actualizando materia:', err);
           this.showError(err.message || this.errorMessages.GENERIC_ERROR);
+          this.cargandoDatos = false;
         }
       });
     } else {
@@ -277,13 +293,23 @@ export class Materias {
           return [materiaCreada];
         })
       ).subscribe({
-        next: () => {
+        next: (response) => {
           this.showMessage(this.successMessages.SAVE_SUCCESS);
           this.resetForm();
-          this.cargarMaterias();
+          this.cargandoDatos = false;
+          
+          // Disparar eventos para actualizar informes
+          window.dispatchEvent(new CustomEvent('materia-agregada', {
+            detail: { materia: response }
+          }));
+          window.dispatchEvent(new CustomEvent('datos-actualizados', {
+            detail: { tipo: 'materia', accion: 'agregada', data: response }
+          }));
+          // No necesitamos cargar materias manualmente, el cache se actualiza automáticamente
         },
         error: (err) => {
           this.showError(err.message || this.errorMessages.GENERIC_ERROR);
+          this.cargandoDatos = false;
         }
       });
     }
@@ -299,8 +325,10 @@ export class Materias {
   }
 
   eliminar(): void {
-    if (this.eliminarId) {
+    if (this.eliminarId && !this.cargandoDatos) {
       const idAEliminar = this.eliminarId;
+      this.cargandoDatos = true;
+      
       this.materiasService.deleteMateria(idAEliminar).subscribe({
         next: () => {
           // Actualizar la lista localmente primero para respuesta inmediata
@@ -308,13 +336,23 @@ export class Materias {
           this.showMessage(this.successMessages.DELETE_SUCCESS);
           this.eliminarId = null;
           this.showEliminar = false;
-          // Recargar desde el servidor para sincronizar
-          this.cargarMaterias();
+          this.cargandoDatos = false;
+          
+          // Disparar evento personalizado para actualizar informes
+          window.dispatchEvent(new CustomEvent('materia-eliminada', {
+            detail: { materiaId: idAEliminar }
+          }));
+          
+          // También disparar evento genérico de actualización de datos
+          window.dispatchEvent(new CustomEvent('datos-actualizados', {
+            detail: { tipo: 'materia', accion: 'eliminada', id: idAEliminar }
+          }));
         },
         error: (err) => {
           this.showError(err.message || this.errorMessages.GENERIC_ERROR);
           this.eliminarId = null;
           this.showEliminar = false;
+          this.cargandoDatos = false;
         }
       });
     } else {
@@ -535,6 +573,14 @@ export class Materias {
         materia.area = nuevaArea;
         this.agruparMateriasPorArea();
         this.showMessage('Área de la materia actualizada');
+        
+        // Disparar eventos para actualizar informes
+        window.dispatchEvent(new CustomEvent('materia-actualizada', {
+          detail: { materiaId: materiaId, nuevaArea: nuevaArea }
+        }));
+        window.dispatchEvent(new CustomEvent('datos-actualizados', {
+          detail: { tipo: 'materia', accion: 'area-actualizada', id: materiaId }
+        }));
       },
       error: (err) => {
         this.showError('Error al actualizar el área de la materia');
@@ -567,5 +613,10 @@ export class Materias {
         errors: control.errors
       });
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

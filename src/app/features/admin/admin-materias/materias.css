@@ -754,6 +754,9 @@ tr:hover {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
     transition: all 0.3s ease;
     overflow: hidden;
+    height: 400px; /* Altura fija para todas las tarjetas */
+    display: flex;
+    flex-direction: column;
 }
 
 .area-card:hover {
@@ -787,6 +790,10 @@ tr:hover {
 
 .area-body {
     padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .area-nombre {
@@ -806,6 +813,7 @@ tr:hover {
 .area-stats {
     display: flex;
     gap: 12px;
+    margin-bottom: 16px;
 }
 
 .stat-badge {
@@ -828,6 +836,27 @@ tr:hover {
     margin-top: 16px;
     padding-top: 16px;
     border-top: 1px solid #e9ecef;
+    flex: 1;
+    overflow-y: auto; /* Permite scroll cuando hay muchas materias */
+    max-height: 180px; /* Altura máxima antes de activar scroll */
+}
+
+.area-materias-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.area-materias-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.area-materias-list::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 10px;
+}
+
+.area-materias-list::-webkit-scrollbar-thumb:hover {
+    background: #a0aec0;
 }
 
 .list-title {

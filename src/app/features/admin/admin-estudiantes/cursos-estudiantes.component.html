@@ -1,0 +1,153 @@
+<div class="cursos-container">
+  <!-- Header con resumen -->
+  <div class="page-header">
+    <h2><i class="fas fa-graduation-cap me-2"></i>Gestión de Cursos y Estudiantes</h2>
+    <div class="stats-cards">
+      <div class="stat-card">
+        <div class="stat-value">{{ cursos.length }}</div>
+        <div class="stat-label">Cursos Totales</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ estudiantes.length }}</div>
+        <div class="stat-label">Estudiantes</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ getTotalEstudiantesActivos() }}</div>
+        <div class="stat-label">Activos</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formulario para crear nuevo curso -->
+  <div class="nuevo-curso-form">
+    <h4><i class="fas fa-plus me-2"></i>Crear Nuevo Curso</h4>
+    <div class="row">
+      <div class="col-md-3">
+        <input type="text" class="form-control" [(ngModel)]="nuevoCurso.nombre" placeholder="Nombre del curso">
+      </div>
+      <div class="col-md-2">
+        <select class="form-control" [(ngModel)]="nuevoCurso.anio">
+          <option value="1">1° Año</option>
+          <option value="2">2° Año</option>
+          <option value="3">3° Año</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <input type="text" class="form-control" [(ngModel)]="nuevoCurso.division" placeholder="División (A, B, C...)">
+      </div>
+      <div class="col-md-2">
+        <select class="form-control" [(ngModel)]="nuevoCurso.turno">
+          <option value="MAÑANA">Mañana</option>
+          <option value="TARDE">Tarde</option>
+          <option value="NOCHE">Noche</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <button type="button" class="btn btn-primary" (click)="crearCurso()">
+          <i class="fas fa-save me-2"></i>Crear Curso
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lista de cursos -->
+  <div class="cursos-list">
+    <div *ngFor="let curso of cursos" class="curso-card">
+      <div class="curso-header" (click)="toggleCurso(curso.id)">
+        <div class="curso-info">
+          <h5>{{ curso.nombre }}</h5>
+          <div class="curso-details">
+            <span class="badge bg-primary me-2">{{ curso.anio }}° Año</span>
+            <span class="badge bg-secondary me-2">División {{ curso.division }}</span>
+            <span class="badge bg-info me-2">{{ curso.turno }}</span>
+          </div>
+        </div>
+        <div class="curso-stats">
+          <div class="stat-item">
+            <strong>{{ getTotalEstudiantesPorCurso(curso.id) }}</strong>
+            <small>Total</small>
+          </div>
+          <div class="stat-item">
+            <strong>{{ getEstudiantesActivosPorCurso(curso.id) }}</strong>
+            <small>Activos</small>
+          </div>
+          <div class="toggle-icon">
+            <i class="fas" [class.fa-chevron-down]="cursoAbierto !== curso.id" [class.fa-chevron-up]="cursoAbierto === curso.id"></i>
+          </div>
+        </div>
+        <div class="curso-actions">
+          <button class="btn btn-sm btn-danger" (click)="eliminarCurso(curso.id); $event.stopPropagation()">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Lista de estudiantes del curso (expandible) -->
+      <div class="curso-content" [class.expanded]="cursoAbierto === curso.id">
+        <div *ngIf="cursoAbierto === curso.id" class="estudiantes-list">
+          <h6><i class="fas fa-users me-2"></i>Estudiantes Asignados</h6>
+          <div *ngIf="estudiantesPorCurso[curso.id]?.length === 0" class="empty-state">
+            <p>No hay estudiantes asignados a este curso.</p>
+          </div>
+          <div *ngFor="let estudiante of estudiantesPorCurso[curso.id]" class="estudiante-item">
+            <div class="estudiante-info">
+              <div class="estudiante-name">
+                {{ estudiante.nombre }} {{ estudiante.apellido }}
+                <span class="badge" [ngClass]="estudiante.activo ? 'bg-success' : 'bg-warning'">
+                  {{ estudiante.activo ? 'Activo' : 'Inactivo' }}
+                </span>
+              </div>
+              <div class="estudiante-details">
+                <small>DNI: {{ estudiante.dni }} | Email: {{ estudiante.email }}</small>
+              </div>
+            </div>
+            <div class="estudiante-actions">
+              <button class="btn btn-sm btn-outline-warning" (click)="desasignarEstudianteDeCurso(estudiante.id)">
+                <i class="fas fa-user-minus me-1"></i>Desasignar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estudiantes sin curso asignado -->
+    <div *ngIf="estudiantesPorCurso[0] && estudiantesPorCurso[0].length > 0" class="curso-card sin-asignar">
+      <div class="curso-header" (click)="toggleCurso(0)">
+        <div class="curso-info">
+          <h5><i class="fas fa-exclamation-triangle me-2"></i>Estudiantes Sin Curso</h5>
+          <div class="curso-details">
+            <span class="badge bg-warning">{{ estudiantesPorCurso[0].length }} estudiantes</span>
+          </div>
+        </div>
+        <div class="toggle-icon">
+          <i class="fas" [class.fa-chevron-down]="cursoAbierto !== 0" [class.fa-chevron-up]="cursoAbierto === 0"></i>
+        </div>
+      </div>
+
+      <div class="curso-content" [class.expanded]="cursoAbierto === 0">
+        <div *ngIf="cursoAbierto === 0" class="estudiantes-list">
+          <div *ngFor="let estudiante of estudiantesPorCurso[0]" class="estudiante-item">
+            <div class="estudiante-info">
+              <div class="estudiante-name">
+                {{ estudiante.nombre }} {{ estudiante.apellido }}
+                <span class="badge" [ngClass]="estudiante.activo ? 'bg-success' : 'bg-warning'">
+                  {{ estudiante.activo ? 'Activo' : 'Inactivo' }}
+                </span>
+              </div>
+              <div class="estudiante-details">
+                <small>DNI: {{ estudiante.dni }} | Email: {{ estudiante.email }}</small>
+              </div>
+            </div>
+            <div class="estudiante-actions">
+              <select class="form-select form-select-sm" (change)="onAsignarCurso($event, estudiante.id)">
+                <option value="">Asignar a curso...</option>
+                <option *ngFor="let curso of cursos" [value]="curso.id">{{ curso.nombre }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

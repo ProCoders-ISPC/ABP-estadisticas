@@ -1,0 +1,277 @@
+.cursos-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.page-header h2 {
+  color: #043237;
+  margin: 0;
+  font-weight: 600;
+}
+
+.stats-cards {
+  display: flex;
+  gap: 15px;
+}
+
+.stat-card {
+  background: linear-gradient(135deg, #0F8795, #43a7b3);
+  color: white;
+  padding: 15px 20px;
+  border-radius: 10px;
+  text-align: center;
+  min-width: 100px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  opacity: 0.9;
+  margin-top: 5px;
+}
+
+.nuevo-curso-form {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 30px;
+  border: 1px solid #dee2e6;
+}
+
+.nuevo-curso-form h4 {
+  color: #043237;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.nuevo-curso-form .form-control, 
+.nuevo-curso-form .form-select {
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+
+.nuevo-curso-form .btn-primary {
+  background: #0F8795;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.nuevo-curso-form .btn-primary:hover {
+  background: #0d7785;
+  transform: translateY(-1px);
+}
+
+.cursos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.curso-card {
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.curso-card:hover {
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  transform: translateY(-2px);
+}
+
+.curso-card.sin-asignar {
+  border-left: 4px solid #ffc107;
+}
+
+.curso-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border-bottom: 1px solid #dee2e6;
+}
+
+.curso-info h5 {
+  margin: 0;
+  color: #043237;
+  font-weight: 600;
+}
+
+.curso-details {
+  margin-top: 8px;
+}
+
+.curso-details .badge {
+  font-size: 0.75rem;
+  padding: 4px 8px;
+}
+
+.curso-stats {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-item strong {
+  display: block;
+  font-size: 1.2rem;
+  color: #043237;
+}
+
+.stat-item small {
+  color: #6c757d;
+  font-size: 0.75rem;
+}
+
+.toggle-icon {
+  color: #0F8795;
+  font-size: 1.2rem;
+  margin-left: 15px;
+}
+
+.curso-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.curso-actions .btn {
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.curso-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.curso-content.expanded {
+  max-height: 1000px;
+}
+
+.estudiantes-list {
+  padding: 20px;
+  background: #fafbfc;
+}
+
+.estudiantes-list h6 {
+  color: #043237;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.empty-state {
+  text-align: center;
+  color: #6c757d;
+  font-style: italic;
+  padding: 20px;
+}
+
+.estudiante-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  transition: all 0.2s ease;
+}
+
+.estudiante-item:hover {
+  border-color: #0F8795;
+  transform: translateX(5px);
+}
+
+.estudiante-name {
+  font-weight: 500;
+  color: #043237;
+  margin-bottom: 2px;
+}
+
+.estudiante-name .badge {
+  font-size: 0.7rem;
+  margin-left: 8px;
+}
+
+.estudiante-details {
+  font-size: 0.85rem;
+  color: #6c757d;
+}
+
+.estudiante-actions .btn {
+  font-size: 0.8rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.estudiante-actions .form-select {
+  font-size: 0.8rem;
+  padding: 4px 8px;
+  min-width: 150px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+  }
+  
+  .stats-cards {
+    justify-content: center;
+  }
+  
+  .nuevo-curso-form .row > div {
+    margin-bottom: 10px;
+  }
+  
+  .curso-header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+  
+  .curso-stats {
+    justify-content: center;
+  }
+  
+  .estudiante-item {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+}

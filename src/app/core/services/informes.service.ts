@@ -21,9 +21,14 @@ export interface CargaAcademica {
 export interface EstadisticasCarga {
   promedio: number;
   mediana: number;
+  moda: number;
   maximo: number;
   minimo: number;
   desviacionEstandar: number;
+  varianza: number;
+  coeficienteVariacion: number;
+  rango: number;
+  interpretacion: string;
 }
 
 

@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
     <div class="en-construccion-container">
       <div class="en-construccion-content">
         <img 
-          src="/img/under-construction/bajo-construccion.gif" 
+          src="assets/img/under-construction/bajo-construccion.gif" 
           alt="En construcción" 
           class="construccion-gif"
         />

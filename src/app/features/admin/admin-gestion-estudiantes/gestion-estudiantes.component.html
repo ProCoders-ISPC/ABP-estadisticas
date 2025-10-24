@@ -1,0 +1,29 @@
+<app-banner-alertas [categoria]="'asistencia'"></app-banner-alertas>
+<div class="gestion-estudiantes-container">
+  <div class="panel-principal">
+    <div class="panel-header">
+      <div class="header-content">
+        <h2 class="panel-title">
+          <i class="fas fa-graduation-cap me-2"></i>Gestión de Estudiantes
+        </h2>
+        <p class="panel-subtitle">Administra los estudiantes del sistema y su asistencia</p>
+      </div>
+    </div>
+
+    <div class="panel-content">
+      <div class="tabs-container">
+        <button class="tab-button" [class.active]="activeTab === 'listado'" (click)="setActiveTab('listado')" routerLink="./listado"><i class="fas fa-users"></i>Listado de Estudiantes</button>
+        <button class="tab-button" [class.active]="activeTab === 'asistencia'" (click)="setActiveTab('asistencia')" routerLink="./asistencia"><i class="fas fa-check-circle"></i>Asistencia General</button>
+        <button class="tab-button" [class.active]="activeTab === 'cursos'" (click)="setActiveTab('cursos')"><i class="fas fa-chalkboard"></i>Gestión de Cursos</button>
+      </div>
+      <div class="tab-content">
+        <div *ngIf="activeTab === 'cursos'">
+          <app-cursos-estudiantes></app-cursos-estudiantes>
+        </div>
+        <div *ngIf="activeTab !== 'cursos'">
+          <router-outlet></router-outlet>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

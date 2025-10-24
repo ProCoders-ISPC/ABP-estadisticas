@@ -129,17 +129,31 @@ export class AdminDocenteService {
   }
 
   asignarRol(usuarioId: number, rolId: number): Observable<any> {
-    if (this.useLocalStorage) {
-      return this.adminDocenteLocalService.asignarRol(usuarioId, rolId);
-    }
-    return this.http.patch(`${this.usuariosUrl}/${usuarioId}/`, { id_rol: rolId });
+    const result = this.useLocalStorage 
+      ? this.adminDocenteLocalService.asignarRol(usuarioId, rolId)
+      : this.http.patch(`${this.usuariosUrl}/${usuarioId}/`, { id_rol: rolId });
+    
+    // Disparar evento de actualización
+    result.subscribe(() => {
+      window.dispatchEvent(new CustomEvent('docente-agregado'));
+      window.dispatchEvent(new CustomEvent('datos-actualizados'));
+    });
+    
+    return result;
   }
   
   actualizarDocente(id: number, docente: Partial<DocenteCarga>): Observable<DocenteCarga> {
-    if (this.useLocalStorage) {
-      return this.adminDocenteLocalService.actualizarDocente(id, docente);
-    }
-    return this.http.patch<DocenteCarga>(`${this.apiUrl}/${id}/`, docente);
+    const result = this.useLocalStorage 
+      ? this.adminDocenteLocalService.actualizarDocente(id, docente)
+      : this.http.patch<DocenteCarga>(`${this.apiUrl}/${id}/`, docente);
+    
+    // Disparar evento de actualización
+    result.subscribe(() => {
+      window.dispatchEvent(new CustomEvent('docente-actualizado'));
+      window.dispatchEvent(new CustomEvent('datos-actualizados'));
+    });
+    
+    return result;
   }
 
   getEstadisticas(): Observable<EstadisticasCarga> {

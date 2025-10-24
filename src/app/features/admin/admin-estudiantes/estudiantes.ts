@@ -1,8 +1,10 @@
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { EstudiantesService, Estudiante } from 'src/app/core/services/estudiantes.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-estudiantes',
@@ -11,7 +13,9 @@ import { EstudiantesService, Estudiante } from 'src/app/core/services/estudiante
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule, FormsModule]
 })
-export class EstudiantesComponent implements OnInit {
+export class EstudiantesComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+  
   estudianteForm!: FormGroup;
   modalForm!: FormGroup;
   estudiantes: Estudiante[] = [];
@@ -30,12 +34,18 @@ export class EstudiantesComponent implements OnInit {
   mensaje = '';
   busquedaTerm = '';
 
-  constructor(private fb: FormBuilder, private estudiantesService: EstudiantesService) { }
+  // Prevenir llamadas duplicadas
+  private operacionEnProceso = false;
+
+  constructor(
+    private fb: FormBuilder, 
+    private estudiantesService: EstudiantesService
+  ) { }
 
   ngOnInit(): void {
     this.estudianteForm = this.fb.group({
       nombre: ['', Validators.required],
-      apellidos: ['', Validators.required],
+      apellido: ['', Validators.required],
       legajo: ['', Validators.required],
       dni: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -46,7 +56,7 @@ export class EstudiantesComponent implements OnInit {
 
     this.modalForm = this.fb.group({
       nombre: ['', Validators.required],
-      apellidos: ['', Validators.required],
+      apellido: ['', Validators.required],
       legajo: ['', Validators.required],
       dni: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -59,32 +69,42 @@ export class EstudiantesComponent implements OnInit {
   }
 
   cargarEstudiantes(): void {
+    if (this.cargando || this.operacionEnProceso) return; // Evitar llamadas duplicadas
+    
     this.cargando = true;
     this.error = '';
     
-    this.estudiantesService.getEstudiantes().subscribe({
-      next: (data: Estudiante[]) => {
-        this.estudiantes = data;
-        this.estudiantesFiltrados = [...this.estudiantes];
-        this.cargando = false;
-      },
-      error: (err) => {
-        console.error('Error al cargar estudiantes:', err);
-        this.error = 'Error al cargar los estudiantes';
-        this.cargando = false;
-      }
-    });
+    this.estudiantesService.getEstudiantes()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: Estudiante[]) => {
+          this.estudiantes = data;
+          this.estudiantesFiltrados = [...this.estudiantes]; // Crear copia
+          this.cargando = false;
+          console.log('👨‍🎓 Estudiantes cargados:', data.length);
+        },
+        error: (err) => {
+          console.error('Error al cargar estudiantes:', err);
+          this.error = 'Error al cargar los estudiantes';
+          this.cargando = false;
+          this.estudiantes = [];
+          this.estudiantesFiltrados = [];
+        }
+      });
   }
   buscarEstudiantes(termino: string): void {
     const t = termino.trim().toLowerCase();
     if (!t) {
-      this.estudiantesFiltrados = [...this.estudiantes];
+      this.estudiantesFiltrados = [...this.estudiantes]; // Crear copia
       return;
     }
+    
     this.estudiantesFiltrados = this.estudiantes.filter(e =>
-      (e.nombre.toLowerCase().includes(t) ||
-        e.legajo.toLowerCase().includes(t) ||
-        e.email.toLowerCase().includes(t))
+      (e.nombre?.toLowerCase().includes(t) ||
+        e.apellido?.toLowerCase().includes(t) ||
+        e.legajo?.toLowerCase().includes(t) ||
+        e.email?.toLowerCase().includes(t) ||
+        e.dni?.toLowerCase().includes(t))
     );
   }
 
@@ -94,8 +114,10 @@ export class EstudiantesComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.estudianteForm.valid) {
+    if (this.estudianteForm.valid && !this.operacionEnProceso) {
+      this.operacionEnProceso = true;
       this.cargando = true;
+      this.error = '';
       
       if (this.editandoEstudiante) {
         // Actualizar estudiante existente
@@ -107,32 +129,42 @@ export class EstudiantesComponent implements OnInit {
         this.estudiantesService.actualizarEstudiante(this.editandoEstudiante.id, datosActualizados).subscribe({
           next: () => {
             this.mensaje = '✓ Estudiante actualizado exitosamente';
-            this.cargarEstudiantes();
             this.cancelarEdicion();
             this.cerrarModal();
-            setTimeout(() => this.mensaje = '', 3000);
+            this.operacionEnProceso = false;
+            this.cargando = false;
+            // No necesitamos recargar manualmente, el cache se actualiza automáticamente
+            this.showMessage();
           },
           error: (err) => {
             console.error('Error al actualizar estudiante:', err);
             this.error = 'Error al actualizar el estudiante';
+            this.operacionEnProceso = false;
             this.cargando = false;
           }
         });
       } else {
         // Crear nuevo estudiante
-        const nuevoEstudiante = this.estudianteForm.value;
+        const nuevoEstudiante = {
+          ...this.estudianteForm.value,
+          estado: 'Activo',
+          docenteId: 0
+        };
         
         this.estudiantesService.crearEstudiante(nuevoEstudiante).subscribe({
           next: () => {
             this.mensaje = '✓ Estudiante creado exitosamente';
-            this.cargarEstudiantes();
             this.estudianteForm.reset();
             this.cerrarModal();
-            setTimeout(() => this.mensaje = '', 3000);
+            this.operacionEnProceso = false;
+            this.cargando = false;
+            // No necesitamos recargar manualmente, el cache se actualiza automáticamente
+            this.showMessage();
           },
           error: (err) => {
             console.error('Error al crear estudiante:', err);
             this.error = 'Error al crear el estudiante';
+            this.operacionEnProceso = false;
             this.cargando = false;
           }
         });
@@ -140,6 +172,10 @@ export class EstudiantesComponent implements OnInit {
     } else {
       this.estudianteForm.markAllAsTouched();
     }
+  }
+
+  private showMessage(): void {
+    setTimeout(() => this.mensaje = '', 3000);
   }
 
   cerrarModal(): void {
@@ -189,18 +225,27 @@ export class EstudiantesComponent implements OnInit {
   }
 
   eliminarEstudiante(estudiante: Estudiante): void {
-    if (confirm(`¿Está seguro que desea eliminar al estudiante ${estudiante.nombre} ${estudiante.apellidos}?`)) {
+    if (this.operacionEnProceso) return;
+    
+    const confirmMessage = `¿Está seguro que desea eliminar al estudiante ${estudiante.nombre} ${estudiante.apellido}?`;
+    if (confirm(confirmMessage)) {
+      this.operacionEnProceso = true;
       this.cargando = true;
       
       this.estudiantesService.eliminarEstudiante(estudiante.id).subscribe({
         next: () => {
           this.mensaje = '✓ Estudiante eliminado exitosamente';
-          this.cargarEstudiantes();
-          setTimeout(() => this.mensaje = '', 3000);
+          // Actualizar la lista localmente para respuesta inmediata
+          this.estudiantes = this.estudiantes.filter(e => e.id !== estudiante.id);
+          this.estudiantesFiltrados = this.estudiantesFiltrados.filter(e => e.id !== estudiante.id);
+          this.operacionEnProceso = false;
+          this.cargando = false;
+          this.showMessage();
         },
         error: (err) => {
           console.error('Error al eliminar estudiante:', err);
           this.error = 'Error al eliminar el estudiante';
+          this.operacionEnProceso = false;
           this.cargando = false;
         }
       });
@@ -221,7 +266,7 @@ export class EstudiantesComponent implements OnInit {
     
     this.estudianteForm.patchValue({
       nombre: estudiante.nombre,
-      apellidos: estudiante.apellidos,
+      apellido: estudiante.apellido,
       legajo: estudiante.legajo,
       dni: estudiante.dni,
       email: estudiante.email,
@@ -240,5 +285,10 @@ export class EstudiantesComponent implements OnInit {
   cerrarModalInfo(): void {
     this.mostrarModalInfo = false;
     this.estudianteInfo = null;
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

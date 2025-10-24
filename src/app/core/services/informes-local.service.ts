@@ -12,24 +12,83 @@ export class InformesLocalService {
 
   getDistribucionPorArea(): Observable<DistribucionArea[]> {
     return new Observable(observer => {
+      console.log('[InformesLocalService] getDistribucionPorArea: Iniciando cálculo de distribución de docentes por área (usando asignaciones).');
+
       const usuarios = this.localStorageService.getUsuarios();
-      const docentes = usuarios.filter(u => u.id_rol === 2);
+      const materias = this.localStorageService.getMaterias();
+      const asignaciones = this.localStorageService.getAsignaciones();
       
-      // Contar docentes por área
-      const areaCount: { [key: string]: number } = {};
-      docentes.forEach(docente => {
-        const area = docente.area || 'SIN_AREA';
-        areaCount[area] = (areaCount[area] || 0) + 1;
+      console.log('[InformesLocalService] getDistribucionPorArea: Usuarios obtenidos:', usuarios.length);
+      console.log('[InformesLocalService] getDistribucionPorArea: Materias obtenidas:', materias.length);
+      console.log('[InformesLocalService] getDistribucionPorArea: Asignaciones obtenidas:', asignaciones.length);
+
+      const docentes = usuarios.filter(u => u.id_rol === 2);
+      console.log('[InformesLocalService] getDistribucionPorArea: Total de docentes:', docentes.length);
+      
+      // NUEVO ENFOQUE: Contar docentes que tienen ASIGNACIONES ACTIVAS POR ÁREA DE LA MATERIA
+      const docentesConAsignaciones = new Set<number>(); // IDs de docentes con asignaciones activas
+      const areaCount: { [key: string]: Set<number> } = {}; // Mapa de área -> Set de IDs de docentes
+      
+      // Procesar asignaciones activas
+      asignaciones.forEach(asignacion => {
+        if (asignacion.estado === 'ACTIVO') {
+          const materia = materias.find(m => m.id === asignacion.id_materia);
+          if (materia) {
+            const area = materia.area || 'SIN_AREA';
+            
+            // Inicializar Set para esta área si no existe
+            if (!areaCount[area]) {
+              areaCount[area] = new Set<number>();
+            }
+            
+            // Agregar el docente a esta área
+            areaCount[area].add(asignacion.id_usuario);
+            docentesConAsignaciones.add(asignacion.id_usuario);
+            
+            console.log(`[InformesLocalService] getDistribucionPorArea: Docente ${asignacion.id_usuario} asignado a materia "${materia.nombre}" en área "${area}"`);
+          }
+        }
       });
+      
+      console.log('[InformesLocalService] getDistribucionPorArea: Docentes únicos con asignaciones activas:', docentesConAsignaciones.size);
+      console.log('[InformesLocalService] getDistribucionPorArea: Conteo por área:', Object.entries(areaCount).map(([area, set]) => ({ area, cantidad: set.size })));
 
-      const total = docentes.length;
-      const distribucion: DistribucionArea[] = Object.keys(areaCount).map(area => ({
-        area: area,
-        cantidad: areaCount[area],
-        porcentaje: total > 0 ? parseFloat(((areaCount[area] / total) * 100).toFixed(2)) : 0
-      })).sort((a, b) => b.cantidad - a.cantidad);
+      const total = docentesConAsignaciones.size; // Total de docentes con asignaciones activas
+      console.log('[InformesLocalService] getDistribucionPorArea: Total de docentes con asignaciones activas:', total);
 
-      observer.next(distribucion);
+      const distribucion: DistribucionArea[] = Object.keys(areaCount)
+        .filter(area => areaCount[area].size > 0) // Solo áreas con docentes asignados
+        .map(area => ({
+          area: area,
+          cantidad: areaCount[area].size,
+          porcentaje: total > 0 ? parseFloat(((areaCount[area].size / total) * 100).toFixed(2)) : 0
+        }))
+        .sort((a, b) => b.cantidad - a.cantidad);
+      
+      console.log('[InformesLocalService] getDistribucionPorArea: Distribución final calculada:', distribucion);
+
+      // Si no hay docentes con asignaciones, mostrar distribución por área de docentes como fallback
+      if (distribucion.length === 0) {
+        console.warn('[InformesLocalService] getDistribucionPorArea: No hay docentes con asignaciones activas. Usando fallback (área del docente).');
+        
+        const areaCountFallback: { [key: string]: number } = {};
+        docentes.forEach(docente => {
+          const area = docente.area || 'SIN_AREA';
+          areaCountFallback[area] = (areaCountFallback[area] || 0) + 1;
+        });
+        
+        const totalDocentes = docentes.length;
+        const distribucionFallback: DistribucionArea[] = Object.keys(areaCountFallback).map(area => ({
+          area: area,
+          cantidad: areaCountFallback[area],
+          porcentaje: totalDocentes > 0 ? parseFloat(((areaCountFallback[area] / totalDocentes) * 100).toFixed(2)) : 0
+        })).sort((a, b) => b.cantidad - a.cantidad);
+        
+        observer.next(distribucionFallback);
+      } else {
+        observer.next(distribucion);
+      }
+      
       observer.complete();
     });
   }
@@ -76,34 +135,77 @@ export class InformesLocalService {
           observer.next({
             promedio: 0,
             mediana: 0,
+            moda: 0,
             maximo: 0,
             minimo: 0,
-            desviacionEstandar: 0
+            desviacionEstandar: 0,
+            varianza: 0,
+            coeficienteVariacion: 0,
+            rango: 0,
+            interpretacion: 'Sin datos disponibles'
           });
           observer.complete();
           return;
         }
 
+        // Media aritmética
         const suma = cantidades.reduce((a, b) => a + b, 0);
         const promedio = suma / cantidades.length;
         
+        // Mediana
         const cantidadesOrdenadas = [...cantidades].sort((a, b) => a - b);
         const mediana = cantidadesOrdenadas.length % 2 === 0
           ? (cantidadesOrdenadas[cantidadesOrdenadas.length / 2 - 1] + cantidadesOrdenadas[cantidadesOrdenadas.length / 2]) / 2
           : cantidadesOrdenadas[Math.floor(cantidadesOrdenadas.length / 2)];
         
+        // Moda (valor más frecuente)
+        const frecuencias: { [key: number]: number } = {};
+        cantidades.forEach(val => {
+          frecuencias[val] = (frecuencias[val] || 0) + 1;
+        });
+        const moda = parseInt(Object.keys(frecuencias).reduce((a, b) => 
+          frecuencias[parseInt(a)] > frecuencias[parseInt(b)] ? a : b
+        ));
+        
+        // Máximo y mínimo
         const maximo = Math.max(...cantidades);
         const minimo = Math.min(...cantidades);
         
+        // Rango
+        const rango = maximo - minimo;
+        
+        // Varianza
         const varianza = cantidades.reduce((acc, val) => acc + Math.pow(val - promedio, 2), 0) / cantidades.length;
+        
+        // Desviación estándar
         const desviacionEstandar = Math.sqrt(varianza);
+        
+        // Coeficiente de variación (CV)
+        const coeficienteVariacion = promedio > 0 ? (desviacionEstandar / promedio) * 100 : 0;
+        
+        // Interpretación automática
+        let interpretacion = '';
+        if (desviacionEstandar < 1.0) {
+          interpretacion = 'Excelente: Distribución muy equilibrada de carga académica.';
+        } else if (desviacionEstandar < 1.5) {
+          interpretacion = 'Buena: Distribución equilibrada con variación mínima.';
+        } else if (desviacionEstandar < 2.0) {
+          interpretacion = 'Regular: Existe variabilidad moderada. Se recomiendan ajustes menores.';
+        } else {
+          interpretacion = 'Crítica: Alta variabilidad. Requiere redistribución urgente de materias.';
+        }
 
         observer.next({
           promedio: parseFloat(promedio.toFixed(2)),
           mediana: parseFloat(mediana.toFixed(2)),
+          moda: moda,
           maximo,
           minimo,
-          desviacionEstandar: parseFloat(desviacionEstandar.toFixed(2))
+          desviacionEstandar: parseFloat(desviacionEstandar.toFixed(2)),
+          varianza: parseFloat(varianza.toFixed(2)),
+          coeficienteVariacion: parseFloat(coeficienteVariacion.toFixed(2)),
+          rango: rango,
+          interpretacion: interpretacion
         });
         observer.complete();
       });
@@ -115,7 +217,7 @@ export class InformesLocalService {
       const materias = this.localStorageService.getMaterias();
       const asignaciones = this.localStorageService.getAsignaciones();
 
-      // Agrupar materias por área
+      // Inicializar contador dinámico solo con áreas que existen en las materias
       const areaCount: { [key: string]: {
         total: number;
         asignadas: number;
@@ -142,21 +244,24 @@ export class InformesLocalService {
         }
       });
 
-      const distribucion: DistribucionMaterias[] = Object.keys(areaCount).map(area => {
-        const datos = areaCount[area];
-        const porcentajeAsignadas = datos.total > 0 
-          ? parseFloat(((datos.asignadas / datos.total) * 100).toFixed(2))
-          : 0;
-        
-        return {
-          area: area,
-          totalMaterias: datos.total,
-          materiasAsignadas: datos.asignadas,
-          materiasSinAsignar: datos.sinAsignar,
-          porcentajeAsignadas: porcentajeAsignadas,
-          porcentajeSinAsignar: parseFloat((100 - porcentajeAsignadas).toFixed(2))
-        };
-      }).sort((a, b) => b.totalMaterias - a.totalMaterias);
+      // Solo incluir áreas que tienen materias
+      const distribucion: DistribucionMaterias[] = Object.keys(areaCount)
+        .filter(area => areaCount[area].total > 0) // Filtrar áreas sin materias
+        .map(area => {
+          const datos = areaCount[area];
+          const porcentajeAsignadas = datos.total > 0 
+            ? parseFloat(((datos.asignadas / datos.total) * 100).toFixed(2))
+            : 0;
+          
+          return {
+            area: area,
+            totalMaterias: datos.total,
+            materiasAsignadas: datos.asignadas,
+            materiasSinAsignar: datos.sinAsignar,
+            porcentajeAsignadas: porcentajeAsignadas,
+            porcentajeSinAsignar: parseFloat((100 - porcentajeAsignadas).toFixed(2))
+          };
+        }).sort((a, b) => b.totalMaterias - a.totalMaterias);
 
       observer.next(distribucion);
       observer.complete();
@@ -244,20 +349,66 @@ export class InformesLocalService {
   getDistribucionEstudiantesPorArea(): Observable<any[]> {
     return new Observable(observer => {
       const materias = this.localStorageService.getMaterias();
+      const usuarios = this.localStorageService.getUsuarios();
+      const asignaciones = this.localStorageService.getAsignaciones();
+      const estudiantes = usuarios.filter(u => u.id_rol === 3);
       
-      // Agrupar materias por área y contar
-      const areaCount: { [key: string]: number } = {};
+      // Si no hay materias, devolver array vacío
+      if (materias.length === 0) {
+        observer.next([]);
+        observer.complete();
+        return;
+      }
+      
+      // Contar estudiantes por área basándose en las materias que tienen asignaciones activas
+      const areaCount: { [key: string]: Set<number> } = {};
+      
+      // Inicializar solo con áreas que tienen materias
       materias.forEach(materia => {
         const area = materia.area || 'SIN_AREA';
-        areaCount[area] = (areaCount[area] || 0) + 1;
+        if (!areaCount[area]) {
+          areaCount[area] = new Set<number>();
+        }
       });
+      
+      // Contar estudiantes únicos por área según sus asistencias/materias
+      const asistencias = this.localStorageService.getAsistencias();
+      asistencias.forEach(asistencia => {
+        const materia = materias.find(m => m.id === asistencia.id_materia);
+        if (materia) {
+          const area = materia.area || 'SIN_AREA';
+          if (areaCount[area]) {
+            areaCount[area].add(asistencia.id_estudiante);
+          }
+        }
+      });
+      
+      // Convertir a formato esperado y filtrar áreas vacías
+      const distribucion = Object.keys(areaCount)
+        .filter(area => areaCount[area].size > 0)
+        .map(area => ({
+          label: area,
+          value: areaCount[area].size
+        })).sort((a, b) => b.value - a.value);
 
-      const distribucion = Object.keys(areaCount).map(area => ({
-        label: area,
-        value: areaCount[area]
-      })).sort((a, b) => b.value - a.value);
-
-      observer.next(distribucion);
+      // Si no hay datos de estudiantes con asistencia, usar conteo de materias como fallback
+      if (distribucion.length === 0) {
+        const materiasPorArea: { [key: string]: number } = {};
+        materias.forEach(materia => {
+          const area = materia.area || 'SIN_AREA';
+          materiasPorArea[area] = (materiasPorArea[area] || 0) + 1;
+        });
+        
+        const distribucionFallback = Object.keys(materiasPorArea).map(area => ({
+          label: area,
+          value: materiasPorArea[area]
+        })).sort((a, b) => b.value - a.value);
+        
+        observer.next(distribucionFallback);
+      } else {
+        observer.next(distribucion);
+      }
+      
       observer.complete();
     });
   }

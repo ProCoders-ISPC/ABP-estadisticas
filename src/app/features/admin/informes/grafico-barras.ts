@@ -115,13 +115,19 @@ export class GraficoBarrasComponent implements OnChanges {
   datosGrafico: any[] = [];
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['datos'] && this.datos) {
-      this.procesarDatos();
+    if (changes['datos']) {
+      console.log('[GraficoBarrasComponent] ngOnChanges - datos entrantes:', this.datos);
+      if (this.datos) {
+        this.procesarDatos();
+      } else {
+        this.datosGrafico = [];
+      }
     }
   }
 
   private procesarDatos(): void {
     if (!this.datos?.etiquetas || !this.datos?.datos) {
+      console.warn('[GraficoBarrasComponent] procesarDatos - datos incompletos:', this.datos);
       this.datosGrafico = [];
       return;
     }
@@ -132,8 +138,10 @@ export class GraficoBarrasComponent implements OnChanges {
     this.datosGrafico = this.datos.etiquetas.map((etiqueta: string, index: number) => ({
       etiqueta: etiqueta,
       valor: this.datos.datos[index],
-      porcentaje: (this.datos.datos[index] / maxValor) * 100,
+      porcentaje: maxValor > 0 ? (this.datos.datos[index] / maxValor) * 100 : 0,
       color: colores[index % colores.length]
     }));
+
+    console.log('[GraficoBarrasComponent] procesarDatos - datosGrafico calculado:', this.datosGrafico);
   }
 }

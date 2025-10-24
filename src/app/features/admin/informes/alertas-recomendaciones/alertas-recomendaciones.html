@@ -1,0 +1,251 @@
+<div class="alertas-container">
+  <!-- Encabezado con resumen -->
+  <div class="alertas-header">
+    <div class="header-titulo">
+      <i class="fas fa-bell"></i>
+      <h2>Sistema de Alertas y Recomendaciones</h2>
+      <button class="btn-refresh" (click)="refrescarAlertas()" [disabled]="cargando">
+        <i class="fas fa-sync-alt" [class.spinning]="cargando"></i>
+        Actualizar
+      </button>
+    </div>
+    
+    @if (resumenAlertas && !cargando) {
+      <div class="resumen-cards">
+        <div class="resumen-card total">
+          <div class="card-icono">
+            <i class="fas fa-list"></i>
+          </div>
+          <div class="card-contenido">
+            <span class="card-numero">{{ resumenAlertas.totalAlertas }}</span>
+            <span class="card-label">Total de Alertas</span>
+          </div>
+        </div>
+        
+        <div class="resumen-card critica">
+          <div class="card-icono">
+            <i class="fas fa-exclamation-circle"></i>
+          </div>
+          <div class="card-contenido">
+            <span class="card-numero">{{ resumenAlertas.alertasCriticas }}</span>
+            <span class="card-label">Críticas</span>
+          </div>
+        </div>
+        
+        <div class="resumen-card advertencia">
+          <div class="card-icono">
+            <i class="fas fa-exclamation-triangle"></i>
+          </div>
+          <div class="card-contenido">
+            <span class="card-numero">{{ resumenAlertas.alertasAdvertencia }}</span>
+            <span class="card-label">Advertencias</span>
+          </div>
+        </div>
+        
+        <div class="resumen-card informativa">
+          <div class="card-icono">
+            <i class="fas fa-info-circle"></i>
+          </div>
+          <div class="card-contenido">
+            <span class="card-numero">{{ resumenAlertas.alertasInformativas }}</span>
+            <span class="card-label">Informativas</span>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Filtros -->
+  <div class="alertas-filtros">
+    <button 
+      class="filtro-btn" 
+      [class.active]="filtroSeleccionado === 'todas'"
+      (click)="cambiarFiltro('todas')"
+    >
+      <i class="fas fa-list"></i>
+      Todas
+    </button>
+    <button 
+      class="filtro-btn critica" 
+      [class.active]="filtroSeleccionado === 'critica'"
+      (click)="cambiarFiltro('critica')"
+    >
+      <i class="fas fa-exclamation-circle"></i>
+      Críticas
+    </button>
+    <button 
+      class="filtro-btn advertencia" 
+      [class.active]="filtroSeleccionado === 'advertencia'"
+      (click)="cambiarFiltro('advertencia')"
+    >
+      <i class="fas fa-exclamation-triangle"></i>
+      Advertencias
+    </button>
+    <button 
+      class="filtro-btn informativa" 
+      [class.active]="filtroSeleccionado === 'info'"
+      (click)="cambiarFiltro('info')"
+    >
+      <i class="fas fa-info-circle"></i>
+      Informativas
+    </button>
+  </div>
+
+  <!-- Indicador de carga -->
+  @if (cargando) {
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p>Analizando datos y generando alertas...</p>
+    </div>
+  }
+
+  <!-- Lista de alertas -->
+  @if (!cargando && alertasFiltradas.length > 0) {
+    <div class="alertas-lista">
+      @for (alerta of alertasFiltradas; track alerta.id) {
+        <div class="alerta-card" [ngClass]="getClaseTipo(alerta.tipo)">
+          <div class="alerta-header">
+            <div class="header-left">
+              <i [class]="getIconoTipo(alerta.tipo)"></i>
+              <div class="alerta-info">
+                <h3>{{ alerta.titulo }}</h3>
+                <div class="alerta-meta">
+                  <span class="meta-item">
+                    <i [class]="getIconoCategoria(alerta.categoria)"></i>
+                    {{ alerta.categoria | titlecase }}
+                  </span>
+                  <span class="meta-item">
+                    <i class="fas fa-clock"></i>
+                    {{ formatearFecha(alerta.timestamp) }}
+                  </span>
+                  <span class="meta-item prioridad">
+                    <i class="fas fa-flag"></i>
+                    Prioridad: {{ getPrioridadTexto(alerta.prioridad) }}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <button 
+              class="btn-toggle" 
+              (click)="toggleDetalles(alerta.id)"
+              [attr.aria-expanded]="mostrarDetalles[alerta.id]"
+            >
+              <i class="fas" [class.fa-chevron-down]="!mostrarDetalles[alerta.id]" [class.fa-chevron-up]="mostrarDetalles[alerta.id]"></i>
+            </button>
+          </div>
+          
+          <div class="alerta-body">
+            <p class="alerta-mensaje">{{ alerta.mensaje }}</p>
+          </div>
+          
+          @if (mostrarDetalles[alerta.id]) {
+            <div class="alerta-detalles">
+              <div class="detalle-seccion">
+                <h4><i class="fas fa-lightbulb"></i> Acción Recomendada</h4>
+                <p class="accion-recomendada">{{ alerta.accionRecomendada }}</p>
+              </div>
+              
+              @if (alerta.datosAdicionales) {
+                <div class="detalle-seccion">
+                  <h4><i class="fas fa-database"></i> Datos Adicionales</h4>
+                  <div class="datos-adicionales">
+                    @if (alerta.datosAdicionales.estudiantes) {
+                      <div class="datos-grupo">
+                        <strong>Estudiantes afectados:</strong>
+                        <ul>
+                          @for (estudiante of alerta.datosAdicionales.estudiantes.slice(0, 5); track estudiante.legajo) {
+                            <li>
+                              {{ estudiante.nombre }} ({{ estudiante.legajo }}) - 
+                              <span class="porcentaje-destacado">{{ estudiante.porcentaje.toFixed(1) }}%</span>
+                            </li>
+                          }
+                          @if (alerta.datosAdicionales.estudiantes.length > 5) {
+                            <li class="ver-mas">
+                              y {{ alerta.datosAdicionales.estudiantes.length - 5 }} más...
+                            </li>
+                          }
+                        </ul>
+                      </div>
+                    }
+                    
+                    @if (alerta.datosAdicionales.docentes) {
+                      <div class="datos-grupo">
+                        <strong>Docentes afectados:</strong>
+                        <ul>
+                          @for (docente of alerta.datosAdicionales.docentes; track docente.nombre) {
+                            <li>
+                              {{ docente.nombre }} - 
+                              <span class="cantidad-destacada">{{ docente.cantidadMaterias }} materias</span>
+                              ({{ docente.area }})
+                            </li>
+                          }
+                        </ul>
+                      </div>
+                    }
+                    
+                    @if (alerta.datosAdicionales.areas) {
+                      <div class="datos-grupo">
+                        <strong>Áreas afectadas:</strong>
+                        <div class="areas-chips">
+                          @for (area of alerta.datosAdicionales.areas; track area) {
+                            <span class="area-chip">{{ area }}</span>
+                          }
+                        </div>
+                      </div>
+                    }
+                    
+                    @if (alerta.datosAdicionales.desviacionActual) {
+                      <div class="datos-grupo metricas">
+                        <div class="metrica-item">
+                          <span class="metrica-label">Desviación Actual:</span>
+                          <span class="metrica-valor">{{ alerta.datosAdicionales.desviacionActual.toFixed(2) }}</span>
+                        </div>
+                        @if (alerta.datosAdicionales.desviacionObjetivo) {
+                          <div class="metrica-item">
+                            <span class="metrica-label">Desviación Objetivo:</span>
+                            <span class="metrica-valor objetivo">{{ alerta.datosAdicionales.desviacionObjetivo }}</span>
+                          </div>
+                        }
+                        @if (alerta.datosAdicionales.promedio) {
+                          <div class="metrica-item">
+                            <span class="metrica-label">Promedio:</span>
+                            <span class="metrica-valor">{{ alerta.datosAdicionales.promedio.toFixed(2) }}</span>
+                          </div>
+                        }
+                      </div>
+                    }
+                    
+                    @if (alerta.datosAdicionales.porcentajeActual) {
+                      <div class="datos-grupo metricas">
+                        <div class="metrica-item">
+                          <span class="metrica-label">Porcentaje Actual:</span>
+                          <span class="metrica-valor">{{ alerta.datosAdicionales.porcentajeActual.toFixed(1) }}%</span>
+                        </div>
+                        @if (alerta.datosAdicionales.porcentajeObjetivo) {
+                          <div class="metrica-item">
+                            <span class="metrica-label">Porcentaje Objetivo:</span>
+                            <span class="metrica-valor objetivo">{{ alerta.datosAdicionales.porcentajeObjetivo }}%</span>
+                          </div>
+                        }
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Mensaje cuando no hay alertas -->
+  @if (!cargando && alertasFiltradas.length === 0) {
+    <div class="sin-alertas">
+      <i class="fas fa-check-circle"></i>
+      <h3>¡Excelente!</h3>
+      <p>No hay alertas {{ filtroSeleccionado !== 'todas' ? 'de tipo ' + filtroSeleccionado : '' }} en este momento.</p>
+      <p class="texto-secundario">El sistema está funcionando dentro de los parámetros esperados.</p>
+    </div>
+  }
+</div>

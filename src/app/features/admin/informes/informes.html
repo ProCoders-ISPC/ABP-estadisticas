@@ -1,20 +1,11 @@
+<app-banner-alertas></app-banner-alertas>
 <div class="informes-container">
   <!-- Selector de tipo de informe -->
-  <div class="form-section">
-    <div class="form-group">
-      <label for="tipoInforme">Seleccionar Tipo de Informe</label>
-      <select 
-        id="tipoInforme" 
-        class="form-control" 
-        [(ngModel)]="tipoInforme" 
-        (change)="generarInforme()"
-      >
-        <option value="distribucion-areas">Distribución de Docentes por Área</option>
-        <option value="carga-academica">Carga Académica por Docente</option>
-        <option value="distribucion-materias">Distribución de Materias</option>
-        <option value="estudiantes-asistencia">Estudiantes y Asistencia</option>
-      </select>
-    </div>
+  <div class="tabs-container">
+    <button class="tab-button" [class.active]="tipoInforme === 'distribucion-areas'" (click)="seleccionarInforme('distribucion-areas')"><i class="fas fa-users"></i>Distribución Docentes</button>
+    <button class="tab-button" [class.active]="tipoInforme === 'carga-academica'" (click)="seleccionarInforme('carga-academica')"><i class="fas fa-balance-scale"></i>Carga Académica</button>
+    <button class="tab-button" [class.active]="tipoInforme === 'distribucion-materias'" (click)="seleccionarInforme('distribucion-materias')"><i class="fas fa-book"></i>Distribución Materias</button>
+    <button class="tab-button" [class.active]="tipoInforme === 'estudiantes-asistencia'" (click)="seleccionarInforme('estudiantes-asistencia')"><i class="fas fa-user-graduate"></i>Estudiantes</button>
   </div>
 
   @if (cargandoDatos) {
@@ -37,6 +28,8 @@
   @if (informeGenerado && !cargandoDatos && !error) {
     <div class="informe-results">
       
+
+
       @if (tipoInforme === 'distribucion-areas' && datosGraficoAreas) {
         <div class="analysis-section">
           <h3>Distribución de Docentes por Área</h3>
@@ -74,7 +67,7 @@
         
           <div class="interpretation">
             <h4>Interpretación del Análisis</h4>
-            <p>{{ getInterpretacionDistribucion() }}</p>
+            <div class="interpretation-content" [innerHTML]="getInterpretacionDistribucion() | formatInterpretation"></div>
           </div>
         </div>
       }
@@ -86,25 +79,86 @@
           
           @if (estadisticasCarga) {
             <div class="statistics-summary">
-              <div class="stat-card">
-                <h4>Promedio</h4>
+              <div class="stat-card" [title]="getTooltipPromedio()">
+                <div class="stat-header">
+                  <h4>Promedio</h4>
+                  <i class="fas fa-info-circle tooltip-icon"></i>
+                </div>
                 <span class="stat-value">{{ getPromedioFormateado() }}</span>
                 <small>materias por docente</small>
               </div>
-              <div class="stat-card">
-                <h4>Mediana</h4>
+              <div class="stat-card" [title]="getTooltipMediana()">
+                <div class="stat-header">
+                  <h4>Mediana</h4>
+                  <i class="fas fa-info-circle tooltip-icon"></i>
+                </div>
                 <span class="stat-value">{{ estadisticasCarga.mediana }}</span>
-                <small>materias por docente</small>
+                <small>valor central</small>
               </div>
-              <div class="stat-card">
-                <h4>Máximo</h4>
+              <div class="stat-card" [title]="getTooltipModa()">
+                <div class="stat-header">
+                  <h4>Moda</h4>
+                  <i class="fas fa-info-circle tooltip-icon"></i>
+                </div>
+                <span class="stat-value">{{ estadisticasCarga.moda }}</span>
+                <small>valor más frecuente</small>
+              </div>
+              <div class="stat-card" [title]="getTooltipMaximo()">
+                <div class="stat-header">
+                  <h4>Máximo</h4>
+                  <i class="fas fa-info-circle tooltip-icon"></i>
+                </div>
                 <span class="stat-value">{{ estadisticasCarga.maximo }}</span>
-                <small>materias asignadas</small>
+                <small>carga más alta</small>
               </div>
-              <div class="stat-card">
-                <h4>Desv. Estándar</h4>
+              <div class="stat-card" [title]="getTooltipMinimo()">
+                <div class="stat-header">
+                  <h4>Mínimo</h4>
+                  <i class="fas fa-info-circle tooltip-icon"></i>
+                </div>
+                <span class="stat-value">{{ estadisticasCarga.minimo }}</span>
+                <small>carga más baja</small>
+              </div>
+              <div class="stat-card" [ngClass]="getClaseDesviacion()" [title]="getTooltipDesviacion()">
+                <div class="stat-header">
+                  <h4>Desv. Estándar</h4>
+                  <i class="fas fa-info-circle tooltip-icon"></i>
+                </div>
                 <span class="stat-value">{{ getDesviacionFormateada() }}</span>
-                <small>variabilidad</small>
+                <small>{{ getInterpretacionDesviacion() }}</small>
+              </div>
+              <div class="stat-card" [title]="getTooltipVarianza()">
+                <div class="stat-header">
+                  <h4>Varianza</h4>
+                  <i class="fas fa-info-circle tooltip-icon"></i>
+                </div>
+                <span class="stat-value">{{ estadisticasCarga.varianza.toFixed(2) }}</span>
+                <small>dispersión al cuadrado</small>
+              </div>
+              <div class="stat-card" [ngClass]="getClaseCV()" [title]="getTooltipCoeficienteVariacion()">
+                <div class="stat-header">
+                  <h4>Coef. Variación</h4>
+                  <i class="fas fa-info-circle tooltip-icon"></i>
+                </div>
+                <span class="stat-value">{{ estadisticasCarga.coeficienteVariacion.toFixed(1) }}%</span>
+                <small>{{ getInterpretacionCV() }}</small>
+              </div>
+              <div class="stat-card" [title]="getTooltipRango()">
+                <div class="stat-header">
+                  <h4>Rango</h4>
+                  <i class="fas fa-info-circle tooltip-icon"></i>
+                </div>
+                <span class="stat-value">{{ estadisticasCarga.rango }}</span>
+                <small>amplitud de variación</small>
+              </div>
+            </div>
+            
+            <!-- Interpretación automática -->
+            <div class="interpretation-box" [ngClass]="getClaseInterpretacion()">
+              <i [class]="getIconoInterpretacion()"></i>
+              <div class="interpretation-content">
+                <h4>Interpretación Automática del Análisis Estadístico</h4>
+                <p>{{ estadisticasCarga.interpretacion }}</p>
               </div>
             </div>
           }
@@ -115,7 +169,7 @@
           
           <div class="interpretation">
             <h4>Interpretación del Análisis</h4>
-            <p>{{ getInterpretacionCarga() }}</p>
+            <div class="interpretation-content" [innerHTML]="getInterpretacionCarga() | formatInterpretation"></div>
           </div>
         </div>
       }
@@ -127,23 +181,35 @@
           
           @if (estadisticasMaterias) {
             <div class="statistics-summary">
-              <div class="stat-card">
-                <h4>Total Materias</h4>
+              <div class="stat-card" [title]="getTooltipTotalMaterias()">
+                <div class="stat-header">
+                  <h4>Total Materias</h4>
+                  <i class="fas fa-info-circle tooltip-icon"></i>
+                </div>
                 <span class="stat-value">{{ estadisticasMaterias.totalMaterias }}</span>
                 <small>en el sistema</small>
               </div>
-              <div class="stat-card success">
-                <h4>Asignadas</h4>
+              <div class="stat-card success" [title]="getTooltipMateriasAsignadas()">
+                <div class="stat-header">
+                  <h4>Asignadas</h4>
+                  <i class="fas fa-info-circle tooltip-icon"></i>
+                </div>
                 <span class="stat-value">{{ estadisticasMaterias.totalAsignadas }}</span>
                 <small>{{ getPorcentajeAsignacionFormateado() }}% del total</small>
               </div>
-              <div class="stat-card warning">
-                <h4>Sin Asignar</h4>
+              <div class="stat-card warning" [title]="getTooltipMateriasSinAsignar()">
+                <div class="stat-header">
+                  <h4>Sin Asignar</h4>
+                  <i class="fas fa-info-circle tooltip-icon"></i>
+                </div>
                 <span class="stat-value">{{ estadisticasMaterias.totalSinAsignar }}</span>
                 <small>{{ (100 - estadisticasMaterias.porcentajeAsignacion).toFixed(1) }}% del total</small>
               </div>
-              <div class="stat-card info">
-                <h4>% Asignación</h4>
+              <div class="stat-card info" [title]="getTooltipPorcentajeAsignacion()">
+                <div class="stat-header">
+                  <h4>% Asignación</h4>
+                  <i class="fas fa-info-circle tooltip-icon"></i>
+                </div>
                 <span class="stat-value">{{ getPorcentajeAsignacionFormateado() }}%</span>
                 <small>cobertura total</small>
               </div>
@@ -230,7 +296,7 @@
           
           <div class="interpretation">
             <h4>Interpretación del Análisis</h4>
-            <p>{{ getInterpretacionMaterias() }}</p>
+            <div class="interpretation-content" [innerHTML]="getInterpretacionMaterias() | formatInterpretation"></div>
             
             @if (estadisticasMaterias && estadisticasMaterias.totalSinAsignar > 0) {
               <div class="alert alert-warning mt-3">
@@ -250,23 +316,35 @@
           
           <!-- Estadísticas generales -->
           <div class="statistics-summary">
-            <div class="stat-card">
-              <h4>Total Estudiantes</h4>
+            <div class="stat-card" [title]="getTooltipTotalEstudiantes()">
+              <div class="stat-header">
+                <h4>Total Estudiantes</h4>
+                <i class="fas fa-info-circle tooltip-icon"></i>
+              </div>
               <span class="stat-value">{{ estadisticasEstudiantes.totalEstudiantes }}</span>
               <small>en el sistema</small>
             </div>
-            <div class="stat-card success">
-              <h4>Activos</h4>
+            <div class="stat-card success" [title]="getTooltipEstudiantesActivos()">
+              <div class="stat-header">
+                <h4>Activos</h4>
+                <i class="fas fa-info-circle tooltip-icon"></i>
+              </div>
               <span class="stat-value">{{ estadisticasEstudiantes.estudiantesActivos }}</span>
               <small>{{ getPorcentajeActivosFormateado() }}% del total</small>
             </div>
-            <div class="stat-card info">
-              <h4>Asistencia Promedio</h4>
+            <div class="stat-card info" [title]="getTooltipPromedioAsistencia()">
+              <div class="stat-header">
+                <h4>Asistencia Promedio</h4>
+                <i class="fas fa-info-circle tooltip-icon"></i>
+              </div>
               <span class="stat-value">{{ getPromedioAsistenciaFormateado() }}%</span>
               <small>general del sistema</small>
             </div>
-            <div class="stat-card warning">
-              <h4>Inactivos</h4>
+            <div class="stat-card warning" [title]="getTooltipEstudiantesInactivos()">
+              <div class="stat-header">
+                <h4>Inactivos</h4>
+                <i class="fas fa-info-circle tooltip-icon"></i>
+              </div>
               <span class="stat-value">{{ estadisticasEstudiantes.estudiantesInactivos }}</span>
               <small>sin actividad reciente</small>
             </div>
@@ -340,31 +418,40 @@
                 </thead>
                 <tbody>
                   @for (estudiante of estudiantesConAsistencia.slice(0, 20); track estudiante.id; let i = $index) {
-                    <tr>
+                    <tr [style.background-color]="getColorFondoAsistencia(estudiante.porcentajeAsistencia)">
                       <td>
                         <span class="ranking-badge" [class.top-3]="i < 3">{{ i + 1 }}</span>
                       </td>
-                      <td>{{ estudiante.nombre }}</td>
+                      <td>
+                        <div class="estudiante-info">
+                          <i [class]="getIconoEstado(estudiante.porcentajeAsistencia)" [style.color]="getColorAsistencia(estudiante.porcentajeAsistencia)"></i>
+                          <span>{{ estudiante.nombre }}</span>
+                        </div>
+                      </td>
                       <td>{{ estudiante.legajo }}</td>
                       <td>{{ estudiante.totalClases }}</td>
-                      <td class="text-success">{{ estudiante.presentes }}</td>
-                      <td class="text-danger">{{ estudiante.ausentes }}</td>
-                      <td class="text-warning">{{ estudiante.tardanzas }}</td>
+                      <td class="text-success"><strong>{{ estudiante.presentes }}</strong></td>
+                      <td class="text-danger"><strong>{{ estudiante.ausentes }}</strong></td>
+                      <td class="text-warning"><strong>{{ estudiante.tardanzas }}</strong></td>
                       <td>
-                        <div class="progress-bar-container">
+                        <div class="progress-bar-container" [title]="estudiante.porcentajeAsistencia.toFixed(2) + '% de asistencia'">
                           <div 
                             class="progress-bar" 
                             [style.width.%]="estudiante.porcentajeAsistencia"
                             [style.background]="getColorAsistencia(estudiante.porcentajeAsistencia)"
                           ></div>
-                          <span class="progress-text">{{ estudiante.porcentajeAsistencia.toFixed(1) }}%</span>
+                          <span class="progress-text" [style.color]="getColorAsistencia(estudiante.porcentajeAsistencia)">
+                            <strong>{{ estudiante.porcentajeAsistencia.toFixed(1) }}%</strong>
+                          </span>
                         </div>
                       </td>
                       <td>
                         <span 
                           class="badge-asistencia"
                           [style.background-color]="getColorAsistencia(estudiante.porcentajeAsistencia)"
+                          [title]="'Estado: ' + getEstadoAsistencia(estudiante.porcentajeAsistencia)"
                         >
+                          <i [class]="getIconoEstado(estudiante.porcentajeAsistencia)"></i>
                           {{ getEstadoAsistencia(estudiante.porcentajeAsistencia) }}
                         </span>
                       </td>
@@ -378,27 +465,7 @@
           <!-- Interpretación del análisis -->
           <div class="interpretation">
             <h4>Interpretación del Análisis</h4>
-            <p>
-              Del total de {{ estadisticasEstudiantes.totalEstudiantes }} estudiantes, 
-              {{ estadisticasEstudiantes.estudiantesActivos }} están activos 
-              ({{ getPorcentajeActivosFormateado() }}% del total).
-            </p>
-            <p>
-              El promedio general de asistencia es del {{ getPromedioAsistenciaFormateado() }}%, 
-              @if (estadisticasEstudiantes.promedioAsistencia >= 80) {
-                lo cual indica un excelente nivel de compromiso estudiantil.
-              } @else if (estadisticasEstudiantes.promedioAsistencia >= 70) {
-                lo cual es un nivel aceptable pero mejorable.
-              } @else {
-                lo cual requiere atención y estrategias de mejora.
-              }
-            </p>
-            @if (estudiantesConAsistencia.length > 0) {
-              <p>
-                Se han identificado {{ getEstudiantesCriticos() }} 
-                estudiantes con asistencia crítica (menor al 60%) que requieren seguimiento especial.
-              </p>
-            }
+            <div class="interpretation-content" [innerHTML]="getInterpretacionEstudiantes() | formatInterpretation"></div>
           </div>
         </div>
       }

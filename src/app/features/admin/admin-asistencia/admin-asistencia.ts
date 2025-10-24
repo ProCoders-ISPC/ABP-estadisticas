@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { forkJoin, of } from 'rxjs';
+import { switchMap, catchError, tap, finalize } from 'rxjs/operators';
 import { AsistenciaService, AsistenciaRegistro } from 'src/app/core/services/asistencia.service';
 import { MateriasService, Materia } from 'src/app/core/services/materias.service';
+import { EstudiantesService } from 'src/app/core/services/estudiantes.service';
+import { AlertasEstadisticasService, MetricasEstadisticas } from 'src/app/core/services/alertas-estadisticas.service';
 
 @Component({
   selector: 'app-admin-asistencia',
@@ -16,6 +20,12 @@ export class AdminAsistenciaComponent implements OnInit {
   materias: Materia[] = [];
   asistenciasFiltradas: AsistenciaRegistro[] = [];
   
+  // Métricas estadísticas en tiempo real
+  metricas: MetricasEstadisticas | null = null;
+  promedioAsistenciaGeneral = 0;
+  estudiantesCriticos: any[] = [];
+  estudiantesEnRiesgo: any[] = [];
+  
   // Filtros
   materiaSeleccionada = '';
   fechaInicio = '';
@@ -26,75 +36,144 @@ export class AdminAsistenciaComponent implements OnInit {
   mostrarModalEditar = false;
   asistenciaEditar: AsistenciaRegistro | null = null;
   
+  // Estado
   cargando = false;
   mensaje = '';
   error = '';
 
   constructor(
     private asistenciaService: AsistenciaService,
-    private materiasService: MateriasService
+    private materiasService: MateriasService,
+    private estudiantesService: EstudiantesService,
+    private alertasEstadisticasService: AlertasEstadisticasService
   ) {}
 
   ngOnInit(): void {
-    this.cargarMaterias();
-    this.cargarAsistencias();
+    this.cargarDatosIniciales();
   }
 
-  cargarMaterias(): void {
-    this.materiasService.getMaterias().subscribe({
-      next: (data) => {
-        this.materias = data;
-      },
-      error: (err) => {
-        this.error = 'Error al cargar materias';
+  /**
+   * Cargar todos los datos necesarios y calcular métricas
+   */
+  private cargarDatosIniciales(): void {
+    console.log('[AdminAsistencia] Iniciando carga de datos iniciales...');
+    this.cargando = true;
+    this.error = '';
+
+    console.log('[AdminAsistencia] DEBUG: Configurando forkJoin para datos base...');
+    forkJoin({
+      materias: this.materiasService.getMaterias().pipe(
+        tap(data => console.log(`[AdminAsistencia] DEBUG: 📚 Materias recibidas: ${data.length} registros.`))
+      ),
+      estudiantes: this.estudiantesService.getEstudiantes().pipe(
+        tap(data => console.log(`[AdminAsistencia] DEBUG: 👨‍🎓 Estudiantes recibidos: ${data.length} registros.`))
+      ),
+      docentes: this.materiasService.getDocentes().pipe(
+        tap(data => console.log(`[AdminAsistencia] DEBUG: 👨‍🏫 Docentes recibidos: ${data.length} registros.`))
+      )
+    }).pipe(
+      tap(() => console.log('[AdminAsistencia] DEBUG: ✅ forkJoin para datos base completado.')),
+      switchMap(({ materias, estudiantes, docentes }) => {
+        console.log('[AdminAsistencia] DEBUG: 📦 Datos base procesados. Cargando asistencias enriquecidas...');
+        this.materias = materias;
+        
+        return this.asistenciaService.getAllAsistenciasEnriquecidas().pipe(
+          tap(data => console.log(`[AdminAsistencia] DEBUG: 📋 Asistencias enriquecidas recibidas: ${data.length} registros.`)),
+          switchMap(asistenciasEnriquecidas => {
+            console.log('[AdminAsistencia] DEBUG: Asistencias enriquecidas procesadas. Calculando métricas...');
+            this.asistencias = asistenciasEnriquecidas;
+            this.aplicarFiltros();
+
+            if (asistenciasEnriquecidas.length === 0) {
+              console.log('[AdminAsistencia] DEBUG: No hay asistencias, se omiten las métricas y se finaliza.');
+              this.metricas = null;
+              this.promedioAsistenciaGeneral = 0;
+              this.estudiantesCriticos = [];
+              this.estudiantesEnRiesgo = [];
+              return of(null); 
+            }
+            
+            console.log('[AdminAsistencia] DEBUG: 📞 Llamando a calcularMetricasYAlertas...');
+            return this.alertasEstadisticasService.calcularMetricasYAlertas(
+              estudiantes, materias, docentes, this.asistencias
+            ).pipe(
+              tap(({ metricas }) => {
+                console.log('[AdminAsistencia] DEBUG: 📊 Métricas y alertas calculadas.');
+                this.metricas = metricas;
+                this.promedioAsistenciaGeneral = metricas.promedio_asistencia;
+                console.log('[AdminAsistencia] DEBUG: 📉 Calculando estudiantes críticos y en riesgo...');
+                this.calcularEstudiantesCriticosYRiesgo(estudiantes, asistenciasEnriquecidas);
+                console.log('[AdminAsistencia] DEBUG: ✅ Finalizado el cálculo de estudiantes.');
+              })
+            );
+          })
+        );
+      }),
+      catchError(err => {
+        console.error('[AdminAsistencia] DEBUG: ❌ Error en el pipeline de carga de datos:', err);
+        this.error = 'Error al cargar y procesar los datos de asistencia.';
+        return of(null);
+      }),
+      finalize(() => {
+        this.cargando = false;
+        console.log('[AdminAsistencia] DEBUG: 🏁 Pipeline de carga finalizado. `cargando` puesto a false.');
+      })
+    ).subscribe();
+  }
+
+  /**
+   * Identificar estudiantes críticos y en riesgo con datos específicos
+   */
+  private calcularEstudiantesCriticosYRiesgo(estudiantes: any[], asistencias: any[]): void {
+    const asistenciaPorEstudiante = new Map<number, { presentes: number; total: number; estudiante: any }>();
+    
+    // Agregar todos los estudiantes
+    estudiantes.forEach(estudiante => {
+      asistenciaPorEstudiante.set(estudiante.id, {
+        presentes: 0,
+        total: 0,
+        estudiante
+      });
+    });
+
+    // Contar asistencias
+    asistencias.forEach(asistencia => {
+      const estudianteId = asistencia.estudiante_id || asistencia.id_estudiante;
+      if (asistenciaPorEstudiante.has(estudianteId)) {
+        const datos = asistenciaPorEstudiante.get(estudianteId)!;
+        datos.total++;
+        if (asistencia.estado === 'PRESENTE' || asistencia.presente) {
+          datos.presentes++;
+        }
       }
     });
-  }
 
-  cargarAsistencias(): void {
-    this.cargando = true;
-    // Simular carga de asistencias desde LocalStorage
-    setTimeout(() => {
-      // Aquí cargaríamos desde el servicio real
-      this.asistencias = this.generarDatosDemostracion();
-      this.aplicarFiltros();
-      this.cargando = false;
-    }, 1000);
-  }
+    // Clasificar estudiantes
+    this.estudiantesCriticos = [];
+    this.estudiantesEnRiesgo = [];
 
-  generarDatosDemostracion(): AsistenciaRegistro[] {
-    return [
-      {
-        id: 1,
-        estudianteId: 1,
-        estudianteNombre: 'Juan Pérez',
-        materiaId: 1,
-        materiaNombre: 'Matemáticas',
-        fecha: '2024-10-14',
-        estado: 'PRESENTE',
-        observaciones: ''
-      },
-      {
-        id: 2,
-        estudianteId: 2,
-        estudianteNombre: 'María González',
-        materiaId: 1,
-        materiaNombre: 'Matemáticas',
-        fecha: '2024-10-14',
-        estado: 'AUSENTE',
-        observaciones: 'Sin justificación'
-      },
-      {
-        id: 3,
-        estudianteId: 3,
-        estudianteNombre: 'Carlos López',
-        materiaId: 2,
-        materiaNombre: 'Historia',
-        fecha: '2024-10-14',
-        estado: 'TARDANZA',
-        observaciones: 'Llegó 15 minutos tarde'
+    asistenciaPorEstudiante.forEach((datos, estudianteId) => {
+      const porcentaje = datos.total > 0 ? (datos.presentes / datos.total) * 100 : 0;
+      
+      if (porcentaje < 60) {
+        this.estudiantesCriticos.push({
+          ...datos.estudiante,
+          porcentajeAsistencia: porcentaje,
+          totalClases: datos.total,
+          presentes: datos.presentes
+        });
+      } else if (porcentaje < 75) {
+        this.estudiantesEnRiesgo.push({
+          ...datos.estudiante,
+          porcentajeAsistencia: porcentaje,
+          totalClases: datos.total,
+          presentes: datos.presentes
+        });
       }
-    ];
+    });
+
+    console.log('🚨 Estudiantes críticos:', this.estudiantesCriticos.length);
+    console.log('⚠️ Estudiantes en riesgo:', this.estudiantesEnRiesgo.length);
   }
 
   aplicarFiltros(): void {
@@ -134,7 +213,7 @@ export class AdminAsistenciaComponent implements OnInit {
       next: () => {
         this.mensaje = 'Asistencia actualizada correctamente';
         this.cerrarModalEditar();
-        this.cargarAsistencias();
+        this.cargarDatosIniciales();
         setTimeout(() => this.mensaje = '', 3000);
       },
       error: (err) => {
@@ -150,7 +229,7 @@ export class AdminAsistenciaComponent implements OnInit {
     this.asistenciaService.deleteAsistencia(id).subscribe({
       next: () => {
         this.mensaje = 'Asistencia eliminada correctamente';
-        this.cargarAsistencias();
+        this.cargarDatosIniciales();
         setTimeout(() => this.mensaje = '', 3000);
       },
       error: (err) => {
@@ -181,5 +260,48 @@ export class AdminAsistenciaComponent implements OnInit {
     a.download = `asistencias_${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
+  }
+
+  // Métodos para métricas estadísticas
+  getColorAsistencia(porcentaje: number): string {
+    if (porcentaje >= 80) return '#28a745'; // Verde
+    if (porcentaje >= 60) return '#ffc107'; // Amarillo
+    return '#dc3545'; // Rojo
+  }
+
+  getEstadoAsistencia(porcentaje: number): string {
+    if (porcentaje >= 80) return 'Excelente';
+    if (porcentaje >= 70) return 'Buena';
+    if (porcentaje >= 60) return 'Regular';
+    return 'Crítica';
+  }
+
+  getClaseMetrica(valor: number, tipo: 'criticos' | 'riesgo' | 'promedio'): string {
+    if (tipo === 'criticos') {
+      return valor > 0 ? 'metric-card-critica' : 'metric-card-excelente';
+    }
+    if (tipo === 'riesgo') {
+      return valor > 0 ? 'metric-card-advertencia' : 'metric-card-buena';
+    }
+    if (tipo === 'promedio') {
+      if (valor >= 85) return 'metric-card-excelente';
+      if (valor >= 75) return 'metric-card-buena';
+      if (valor >= 60) return 'metric-card-advertencia';
+      return 'metric-card-critica';
+    }
+    return '';
+  }
+
+  // Getters para métricas
+  get totalEstudiantesCriticos(): number {
+    return this.estudiantesCriticos.length;
+  }
+
+  get totalEstudiantesEnRiesgo(): number {
+    return this.estudiantesEnRiesgo.length;
+  }
+
+  get promedioFormateado(): string {
+    return this.promedioAsistenciaGeneral.toFixed(1) + '%';
   }
 }

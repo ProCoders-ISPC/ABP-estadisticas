@@ -1,6 +1,6 @@
-﻿<div class="estudiantes-container">
+﻿
+<div class="estudiantes-container">
   <div class="header-section">
-    <h2>👨‍🎓 Gestión de Estudiantes</h2>
     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#estudianteModal" (click)="abrirModalNuevo()">
       + Nuevo Estudiante
     </button>
@@ -56,7 +56,7 @@
           @for (estudiante of estudiantesFiltrados; track estudiante.id) {
             <tr>
               <td><strong>{{ estudiante.legajo }}</strong></td>
-              <td>{{ estudiante.nombre }} {{ estudiante.apellidos }}</td>
+              <td>{{ estudiante.nombre }} {{ estudiante.apellido }}</td>
               <td>{{ estudiante.dni }}</td>
               <td>{{ estudiante.email }}</td>
               <td>
@@ -144,10 +144,10 @@
               <input 
                 type="text" 
                 class="form-control" 
-                formControlName="apellidos"
-                [class.is-invalid]="estudianteForm.get('apellidos')?.invalid && estudianteForm.get('apellidos')?.touched"
+                formControlName="apellido"
+                [class.is-invalid]="estudianteForm.get('apellido')?.invalid && estudianteForm.get('apellido')?.touched"
               />
-              @if (estudianteForm.get('apellidos')?.invalid && estudianteForm.get('apellidos')?.touched) {
+              @if (estudianteForm.get('apellido')?.invalid && estudianteForm.get('apellido')?.touched) {
                 <div class="invalid-feedback">Los apellidos son requeridos</div>
               }
             </div>
@@ -263,7 +263,7 @@
           <div class="info-grid">
             <div class="info-item">
               <span class="info-label">Nombre Completo:</span>
-              <span class="info-value">{{ estudianteInfo.nombre }} {{ estudianteInfo.apellidos }}</span>
+              <span class="info-value">{{ estudianteInfo.nombre }} {{ estudianteInfo.apellido }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">Legajo:</span>

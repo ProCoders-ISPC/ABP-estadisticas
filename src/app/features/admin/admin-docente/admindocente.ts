@@ -1,15 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { AdminDocenteService, DocenteCarga } from 'src/app/core/services/admindocente.service';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { BannerAlertasComponent } from '../../../shared/components/banner-alertas/banner-alertas';
 
 @Component({
   selector: 'app-admindocente',
   templateUrl: './admindocente.html',
   styleUrls: ['./admindocente.css'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule]
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, BannerAlertasComponent]
 })
 export class AdminDocenteComponent implements OnInit {
   docentes: DocenteCarga[] = [];
@@ -48,7 +50,8 @@ export class AdminDocenteComponent implements OnInit {
   
   constructor(
     private adminDocenteService: AdminDocenteService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private route: ActivatedRoute
   ) {
     this.formularioEdicion = this.fb.group({
       nombre: ['', [Validators.required, Validators.minLength(2), Validators.pattern('^[a-zA-ZÀ-ÿ\\u00f1\\u00d1\\s]+$')]],
@@ -70,6 +73,15 @@ export class AdminDocenteComponent implements OnInit {
     ).subscribe(term => {
       this.terminoBusqueda = term;
       this.buscarDocentes();
+    });
+    
+    // Verificar si viene desde una alerta específica
+    this.route.queryParams.subscribe(params => {
+      if (params['filtro'] === 'sobrecargados') {
+        this.mensaje = '🚨 Mostrando docentes con sobrecarga detectada desde alertas';
+        // Filtrar y resaltar docentes sobrecargados
+        this.filtrarDocenesSobrecargados();
+      }
     });
     
     this.cargarDocentes();
@@ -350,5 +362,45 @@ export class AdminDocenteComponent implements OnInit {
   cerrarModalInfo(): void {
     this.mostrarModalInfo = false;
     this.docenteInfo = null;
+  }
+
+  // Método para filtrar docentes sobrecargados cuando viene desde alertas
+  filtrarDocenesSobrecargados(): void {
+    setTimeout(() => {
+      // Calcular qué docentes están realmente sobrecargados
+      const cargas = this.docentesOriginales.map(d => d.cantidadMaterias || 0);
+      if (cargas.length === 0) return;
+      
+      const promedio = cargas.reduce((sum, c) => sum + c, 0) / cargas.length;
+      const varianza = cargas.reduce((sum, c) => sum + Math.pow(c - promedio, 2), 0) / cargas.length;
+      const desviacion = Math.sqrt(varianza);
+      
+      // Mismo algoritmo que en el service de alertas
+      const materiasMaxima = Math.max(...cargas);
+      const materiaMinima = Math.min(...cargas);
+      const rangoTotal = materiasMaxima - materiaMinima;
+      
+      if (rangoTotal > 2) {
+        const umbralEstadistico = promedio + (1.5 * desviacion);
+        const umbralPractico = promedio + 3;
+        const umbralSobrecarga = Math.max(umbralEstadistico, umbralPractico);
+        const umbralAbsoluto = 6;
+        
+        // Filtrar docentes sobrecargados
+        this.docentes = this.docentesOriginales.filter(docente => {
+          const materias = docente.cantidadMaterias || 0;
+          return materias > umbralSobrecarga || materias > umbralAbsoluto;
+        });
+        
+        if (this.docentes.length === 0) {
+          this.mensaje = '✅ No se encontraron docentes con sobrecarga real en este momento';
+        } else {
+          this.mensaje = `🚨 Se encontraron ${this.docentes.length} docente(s) con sobrecarga de trabajo`;
+        }
+      } else {
+        this.mensaje = '✅ Las cargas de trabajo están bien distribuidas';
+        this.docentes = [...this.docentesOriginales];
+      }
+    }, 300);
   }
 }

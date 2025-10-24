@@ -1,0 +1,226 @@
+/**
+ * ANIMACIONES GLOBALES PARA RESALTADO DE ALERTAS
+ * Agregar este archivo en src/styles.css o importarlo globalmente
+ */
+
+/* ========================================
+   ANIMACIONES DE PULSACIÓN
+   ======================================== */
+
+@keyframes pulse-green {
+  0% {
+    box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+    border-color: #28a745;
+  }
+  50% {
+    box-shadow: 0 0 30px 10px rgba(40, 167, 69, 0);
+    border-color: #20c997;
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+    border-color: #28a745;
+  }
+}
+
+@keyframes pulse-red {
+  0% {
+    box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+    border-color: #dc3545;
+  }
+  50% {
+    box-shadow: 0 0 30px 10px rgba(220, 53, 69, 0);
+    border-color: #ff6b7a;
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+    border-color: #dc3545;
+  }
+}
+
+@keyframes pulse-yellow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7);
+    border-color: #ffc107;
+  }
+  50% {
+    box-shadow: 0 0 30px 10px rgba(255, 193, 7, 0);
+    border-color: #ffd454;
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
+    border-color: #ffc107;
+  }
+}
+
+@keyframes pulse-orange {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.7);
+    border-color: #ff9800;
+  }
+  50% {
+    box-shadow: 0 0 30px 10px rgba(255, 152, 0, 0);
+    border-color: #ffb74d;
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 152, 0, 0);
+    border-color: #ff9800;
+  }
+}
+
+/* ========================================
+   CLASES DE ANIMACIÓN
+   ======================================== */
+
+.pulse-green {
+  animation: pulse-green 1.5s ease-in-out 4;
+  --highlight-color: #28a745;
+}
+
+.pulse-red {
+  animation: pulse-red 1.5s ease-in-out 4;
+  --highlight-color: #dc3545;
+}
+
+.pulse-yellow {
+  animation: pulse-yellow 1.5s ease-in-out 4;
+  --highlight-color: #ffc107;
+}
+
+.pulse-orange {
+  animation: pulse-orange 1.5s ease-in-out 4;
+  --highlight-color: #ff9800;
+}
+
+/* ========================================
+   EFECTOS ADICIONALES
+   ======================================== */
+
+/* Efecto de brillo al hacer hover sobre elementos resaltados */
+.pulse-green:hover,
+.pulse-red:hover,
+.pulse-yellow:hover,
+.pulse-orange:hover {
+  transform: scale(1.02);
+  transition: transform 0.2s ease;
+}
+
+/* Indicador visual para elementos que necesitan atención */
+.necesita-atencion {
+  position: relative;
+}
+
+.necesita-atencion::before {
+  content: '⚠️';
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: #ff9800;
+  color: white;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  z-index: 10;
+  animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Badges de estado */
+.badge-critico {
+  background: #dc3545;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  animation: pulse-red-soft 2s ease-in-out infinite;
+}
+
+.badge-advertencia {
+  background: #ffc107;
+  color: #333;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  animation: pulse-yellow-soft 2s ease-in-out infinite;
+}
+
+.badge-ok {
+  background: #28a745;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+@keyframes pulse-red-soft {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes pulse-yellow-soft {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* ========================================
+   UTILIDADES PARA SCROLL HIGHLIGHTING
+   ======================================== */
+
+.scroll-target {
+  scroll-margin-top: 120px; /* Espacio para el banner + header */
+}
+
+/* Transición suave para elementos que cambian de estado */
+.estado-transicion {
+  transition: all 0.5s ease-in-out;
+}
+
+/* Efecto de "completado" cuando se resuelve una alerta */
+@keyframes checkmark {
+  0% {
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2) rotate(180deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(360deg);
+    opacity: 1;
+  }
+}
+
+.alerta-resuelta::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 48px;
+  color: #28a745;
+  animation: checkmark 0.6s ease-in-out;
+  pointer-events: none;
+}

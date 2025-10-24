@@ -1090,6 +1090,10 @@ export class LocalStorageService {
     return asistencias;
   }
 
+  private notifyDataChange() {
+    window.dispatchEvent(new CustomEvent('datos-actualizados'));
+  }
+
   // ===== MÉTODOS DE USUARIOS =====
   getUsuarios(): UsuarioLocal[] {
     const data = localStorage.getItem(this.USUARIOS_KEY);
@@ -1112,6 +1116,7 @@ export class LocalStorageService {
     usuario.created_at = new Date().toISOString();
     usuarios.push(usuario);
     localStorage.setItem(this.USUARIOS_KEY, JSON.stringify(usuarios));
+    this.notifyDataChange();
   }
 
   updateUsuario(id: number, datos: Partial<UsuarioLocal>): boolean {
@@ -1120,6 +1125,7 @@ export class LocalStorageService {
     if (index !== -1) {
       usuarios[index] = { ...usuarios[index], ...datos };
       localStorage.setItem(this.USUARIOS_KEY, JSON.stringify(usuarios));
+      this.notifyDataChange();
       return true;
     }
     return false;
@@ -1130,6 +1136,7 @@ export class LocalStorageService {
     const filtered = usuarios.filter(u => u.id !== id);
     if (filtered.length < usuarios.length) {
       localStorage.setItem(this.USUARIOS_KEY, JSON.stringify(filtered));
+      this.notifyDataChange();
       return true;
     }
     return false;

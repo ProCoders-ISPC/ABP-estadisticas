@@ -1,0 +1,68 @@
+<div class="banner-alertas-container" 
+     *ngIf="!cerrado">
+  
+  <!-- Mensaje cuando no hay alertas -->
+  <div class="banner-sin-alertas" *ngIf="alertasTop.length === 0">
+    <span class="icono">✅</span>
+    <span class="mensaje-ok">¡Todo en orden! No hay alertas pendientes.</span>
+  </div>
+
+  <!-- Versión minimizada -->
+  <div class="banner-minimizado" *ngIf="minimizado && alertasTop.length > 0" (click)="toggleMinimizar()">
+    <span class="icono">{{ getIcono() }}</span>
+    <span class="contador">{{ alertasTop.length }}</span>
+  </div>
+
+  <!-- Swiper de alertas -->
+  <div class="banner-completo" *ngIf="!minimizado && alertasTop.length > 0">
+    <div class="banner-header">
+      <div class="banner-tipo">
+        <span class="icono-tipo">🔔</span>
+        <span class="tipo-texto">ALERTAS DEL SISTEMA</span>
+      </div>
+      
+      <div class="banner-controles">
+        <button class="btn-control" 
+                (click)="toggleMinimizar()"
+                title="Minimizar">
+          −
+        </button>
+        <button class="btn-control btn-cerrar" 
+                (click)="cerrar()"
+                title="Cerrar">
+          ×
+        </button>
+      </div>
+    </div>
+
+    <!-- Swiper Container -->
+    <div class="swiper swiper-alertas">
+      <div class="swiper-wrapper">
+        <div *ngFor="let alerta of alertasTop" 
+             class="swiper-slide alerta-card"
+             [ngClass]="getColorClaseAlerta(alerta)">
+
+          <div class="alerta-contenido">
+            <div class="alerta-titulo">{{ alerta.titulo }}</div>
+            <div class="alerta-mensaje">{{ alerta.mensaje }}</div>
+            
+            <!-- Botón de acción -->
+            <button class="btn-accion-alerta" 
+                    (click)="ejecutarAccionAlerta(alerta)"
+                    title="Ir al problema">
+              <span class="icono-accion">🔧</span>
+              Ver y Corregir Problema
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Navegación -->
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
+      
+      <!-- Paginación -->
+      <div class="swiper-pagination"></div>
+    </div>
+  </div>
+</div>
