@@ -9,6 +9,7 @@ import { AsistenciaService } from '../../../core/services/asistencia.service';
 import { MateriasService } from '../../../core/services/materias.service';
 import { EstudiantesService } from '../../../core/services/estudiantes.service';
 import { AlertasEstadisticasService, MetricasEstadisticas } from '../../../core/services/alertas-estadisticas.service';
+import { GeneradorReportesService } from '../../../core/services/generador-reportes.service';
 import { GraficoBarrasComponent } from './grafico-barras';
 import { GraficoPieComponent } from './grafico-pie';
 import { AlertasRecomendacionesComponent } from './alertas-recomendaciones/alertas-recomendaciones';
@@ -68,7 +69,8 @@ export class InformesComponent implements OnInit, AfterViewInit, OnDestroy {
     private asistenciaService: AsistenciaService,
     private materiasService: MateriasService,
     private estudiantesService: EstudiantesService,
-    private alertasEstadisticasService: AlertasEstadisticasService
+    private alertasEstadisticasService: AlertasEstadisticasService,
+    private generadorReportesService: GeneradorReportesService
   ) {
     Chart.register(...registerables);
   }
@@ -1884,6 +1886,83 @@ Identifica estudiantes en riesgo para implementar estrategias de retención temp
       this.chartVarianza.destroy();
       this.chartVarianza = null;
     }
+  }
+
+  /**
+   * Genera el reporte en formato TXT
+   */
+  generarReporte(): string {
+    return this.generadorReportesService.generarReporteTXT(
+      this.metricas,
+      this.distribucionAreas,
+      this.cargaAcademica,
+      this.estadisticasCarga,
+      this.distribucionMaterias,
+      this.estadisticasMaterias,
+      this.estadisticasEstudiantes
+    );
+  }
+
+  /**
+   * Descarga el reporte como archivo TXT
+   */
+  descargarReporte(): void {
+    const contenido = this.generarReporte();
+    this.generadorReportesService.descargarReporteTXT(contenido, 'reporte-profesort-analytics');
+  }
+
+  /**
+   * Abre el reporte en una ventana emergente
+   */
+  verReporte(): void {
+    const contenido = this.generarReporte();
+    const ventana = window.open('', 'Reporte PROFESORT', 'width=1000,height=700');
+    if (ventana) {
+      ventana.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <title>Reporte PROFESORT ANALYTICS</title>
+          <style>
+            body { font-family: 'Courier New', monospace; margin: 20px; line-height: 1.4; }
+            pre { background: #f5f5f5; padding: 15px; border-radius: 5px; overflow: auto; }
+            button { padding: 10px 20px; margin: 10px 5px 10px 0; cursor: pointer; font-size: 14px; }
+            .header { text-align: center; margin-bottom: 20px; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <button onclick="window.print()">Imprimir</button>
+            <button onclick="descargar()">Descargar</button>
+          </div>
+          <pre>${contenido}</pre>
+          <script>
+            function descargar() {
+              const elemento = document.createElement('a');
+              const archivo = new Blob([${JSON.stringify(contenido)}], { type: 'text/plain; charset=utf-8' });
+              elemento.href = URL.createObjectURL(archivo);
+              elemento.download = 'reporte-profesort_' + new Date().toISOString().split('T')[0] + '.txt';
+              elemento.click();
+            }
+          </script>
+        </body>
+        </html>
+      `);
+      ventana.document.close();
+    }
+  }
+
+  /**
+   * Copia el reporte al portapapeles
+   */
+  copiarAlPortapapeles(): void {
+    const contenido = this.generarReporte();
+    this.generadorReportesService.copiarAlPortapapeles(contenido).then(() => {
+      alert('✅ Reporte copiado al portapapeles correctamente');
+    }).catch(() => {
+      alert('❌ Error al copiar el reporte');
+    });
   }
 
   /**

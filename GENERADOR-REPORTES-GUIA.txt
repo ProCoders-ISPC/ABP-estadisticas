@@ -1,0 +1,293 @@
+═══════════════════════════════════════════════════════════════════════════════
+📊 GENERADOR DE REPORTES - GUÍA DE USO
+   PROFESORT ANALYTICS - Sistema de Gestión Educativa
+═══════════════════════════════════════════════════════════════════════════════
+
+🎯 DESCRIPCIÓN GENERAL
+═══════════════════════════════════════════════════════════════════════════════
+
+El sistema PROFESORT ANALYTICS ahora incluye una funcionalidad de generación de
+reportes en formato TXT que permite exportar un informe integral con todas las
+estadísticas y análisis del sistema.
+
+
+📋 UBICACIÓN DEL MENÚ
+═══════════════════════════════════════════════════════════════════════════════
+
+El menú de generación de reportes se encuentra:
+
+✓ En el panel de INFORMES
+✓ Visible en la parte superior, después del banner de alertas
+✓ Con diseño visual destacado en color azul/verde (gradiente)
+✓ Siempre accesible sin necesidad de cambiar de pestaña
+
+
+🖥️ INTERFAZ DEL MENÚ
+═══════════════════════════════════════════════════════════════════════════════
+
+El menú contiene 3 botones principales:
+
+┌─────────────────────────────────────────────────────────────┐
+│ 📊 Generar Reportes                                         │
+│ Exporta un informe completo en formato TXT con todas las   │
+│ estadísticas del sistema                                    │
+├─────────────────────────────────────────────────────────────┤
+│ [📥 Descargar]  [👁️ Ver]  [📋 Copiar]                      │
+└─────────────────────────────────────────────────────────────┘
+
+
+📥 BOTÓN 1: DESCARGAR
+═══════════════════════════════════════════════════════════════════════════════
+
+FUNCIÓN: Descarga el reporte como archivo TXT
+
+COMPORTAMIENTO:
+• Abre un diálogo de descarga del navegador
+• Genera un archivo con nombre: reporte-profesort-analytics_YYYY-MM-DD.txt
+• El archivo se guarda en tu carpeta de descargas
+• Encoding: UTF-8 (compatible con cualquier editor de texto)
+
+CUÁNDO USAR:
+✓ Cuando necesitas guardar el reporte en tu computadora
+✓ Para archivarlo o hacer copias de seguridad
+✓ Para compartirlo por email o mensajería
+
+
+👁️ BOTÓN 2: VER
+═══════════════════════════════════════════════════════════════════════════════
+
+FUNCIÓN: Abre el reporte en una ventana emergente
+
+CARACTERÍSTICAS:
+• Abre una nueva ventana con el reporte formateado
+• Incluye botones para Imprimir y Descargar dentro de la ventana
+• Fuente monoespaciada para mejor lectura de tablas
+• Fondo claro para fácil legibilidad
+
+VENTAJAS:
+✓ Vista previa rápida del contenido
+✓ Posibilidad de imprimir directamente desde la ventana
+✓ No requiere guardar archivo
+✓ Ideal para verificación rápida
+
+
+📋 BOTÓN 3: COPIAR
+═══════════════════════════════════════════════════════════════════════════════
+
+FUNCIÓN: Copia el reporte al portapapeles
+
+COMPORTAMIENTO:
+• Copia el contenido completo del reporte al portapapeles
+• Muestra un mensaje de confirmación al completarse
+• Permite pegar el contenido en cualquier editor de texto
+
+CASOS DE USO:
+✓ Para pegar en documentos Word/Google Docs
+✓ Para compartir en chats de texto
+✓ Para integrar en otros documentos
+✓ Para procesamiento adicional
+
+
+📊 CONTENIDO DEL REPORTE
+═══════════════════════════════════════════════════════════════════════════════
+
+El reporte incluye 7 secciones principales:
+
+1️⃣  RESUMEN EJECUTIVO
+   • Total de estudiantes registrados
+   • Total de docentes
+   • Total de materias
+   • Áreas de conocimiento
+   • Registros de asistencia
+
+2️⃣  ESTADÍSTICAS GENERALES
+   • Promedio de asistencia institucional
+   • Cobertura de materias asignadas
+   • Cantidad de alertas activas
+   • Estudiantes en situación crítica
+
+3️⃣  DISTRIBUCIÓN DE DOCENTES POR ÁREA
+   • Tabla con cantidad de docentes por área
+   • Porcentajes y análisis estadístico
+   • Área dominante y brechas entre áreas
+
+4️⃣  CARGA ACADÉMICA DOCENTE
+   • Medidas de tendencia central (Promedio, Mediana, Moda)
+   • Medidas de dispersión (Varianza, Desviación Estándar, CV)
+   • Análisis de casos (sobrecarga, sin carga)
+   • Top 10 docentes con mayor carga
+
+5️⃣  DISTRIBUCIÓN DE MATERIAS
+   • Cobertura por área de conocimiento
+   • Tabla detallada con materias asignadas/sin asignar
+   • Resumen de cobertura y estado
+
+6️⃣  ESTADÍSTICAS DE ESTUDIANTES Y ASISTENCIA
+   • Datos generales (Total, activos, inactivos)
+   • Promedio de asistencia
+   • Nivel de asistencia y análisis
+
+7️⃣  RECOMENDACIONES Y ACCIONES SUGERIDAS
+   • Recomendaciones automáticas basadas en datos
+   • Acciones prioritarias según el estado del sistema
+   • Planes de mejora sugeridos
+
+
+📏 FORMATO DEL REPORTE
+═══════════════════════════════════════════════════════════════════════════════
+
+ESTRUCTURA VISUAL:
+• Separadores ASCII art para claridad visual
+• Tablas formateadas con bordes ASCII
+• Emojis para indicación visual de estado
+• Indentación consistente para legibilidad
+
+EJEMPLO DE TABLA:
+┌──────────────────────┬────────┬──────────┐
+│ Área                 │ Total  │ % Cob.   │
+├──────────────────────┼────────┼──────────┤
+│ Exactas              │   15   │   86.7%  │
+│ Sociales             │   12   │   83.3%  │
+│ Naturales            │   10   │   90.0%  │
+└──────────────────────┴────────┴──────────┘
+
+INDICADORES DE ESTADO:
+🟢 Verde  = Excelente / Bueno
+🟡 Amarillo = Regular / Advertencia
+🟠 Naranja = Problema moderado
+🔴 Rojo   = Crítico / Requiere atención
+
+
+🔍 INTERPRETACIÓN DE MÉTRICAS
+═══════════════════════════════════════════════════════════════════════════════
+
+DESVIACIÓN ESTÁNDAR (σ):
+• < 1.0  = 🟢 Distribución muy equilibrada
+• 1.0-1.5 = 🟡 Distribución equilibrada
+• 1.5-2.0 = 🟠 Requiere ajustes menores
+• > 2.0   = 🔴 Redistribución urgente necesaria
+
+COBERTURA ACADÉMICA:
+• > 95%   = 🏆 Excelente
+• 90-95%  = 🟢 Muy buena
+• 80-90%  = 🟡 Buena
+• 70-80%  = 🟠 Regular
+• < 70%   = 🔴 Crítica
+
+ASISTENCIA PROMEDIO:
+• ≥ 90%   = 🏆 Excelente compromiso
+• 80-89%  = 🟢 Muy buena asistencia
+• 70-79%  = 🟡 Aceptable
+• 60-69%  = 🟠 Regular, necesita mejoras
+• < 60%   = 🔴 Crítica
+
+
+💡 CASOS DE USO COMUNES
+═══════════════════════════════════════════════════════════════════════════════
+
+CASO 1: PRESENTACIÓN A DIRECTIVOS
+→ Usar botón "VER" → Imprimir desde la ventana → Presentar
+→ O usar "DESCARGAR" → Convertir a PDF → Presentar
+
+CASO 2: ANÁLISIS DETALLADO
+→ Usar "VER" para inspección rápida
+→ Si necesita más análisis: "DESCARGAR" para guardar
+
+CASO 3: COMPARTIR INFORMACIÓN
+→ "COPIAR" → Pegar en email/documento colaborativo
+→ O "DESCARGAR" → Adjuntar como archivo
+
+CASO 4: SEGUIMIENTO PERIÓDICO
+→ Generar reportes semanales/mensuales
+→ Guardar con fecha en nombre
+→ Comparar con reportes anteriores
+
+
+⚙️ CONFIGURACIÓN TÉCNICA
+═══════════════════════════════════════════════════════════════════════════════
+
+ARCHIVO GENERADO:
+• Nombre: reporte-profesort-analytics_YYYY-MM-DD.txt
+• Tamaño: Aproximadamente 15-30 KB (depende de datos)
+• Encoding: UTF-8
+• Compatible con: Todos los editores de texto
+
+NAVEGADORES SOPORTADOS:
+✓ Chrome / Chromium
+✓ Firefox
+✓ Safari
+✓ Edge
+✓ Opera
+
+
+❓ PREGUNTAS FRECUENTES
+═══════════════════════════════════════════════════════════════════════════════
+
+P: ¿El reporte se genera con datos en tiempo real?
+R: Sí, el reporte siempre se genera con los datos actuales del sistema.
+
+P: ¿Puedo programar la generación automática de reportes?
+R: Actualmente no, pero puedes generar reportes manualmente según necesites.
+
+P: ¿Qué hago si el reporte no se descarga?
+R: Verifica que no tengas bloqueador de ventanas emergentes. Intenta con el
+   botón "VER" en su lugar.
+
+P: ¿Puedo editar el reporte después de descargarlo?
+R: Sí, es un archivo de texto plano que puedes editar en cualquier editor.
+
+P: ¿El archivo es muy grande?
+R: No, típicamente ocupa 15-30 KB. Muy compacto para compartir.
+
+P: ¿Puedo convertirlo a PDF?
+R: Sí, abre el archivo en Word/LibreOffice Office y exporta como PDF.
+
+
+🆘 SOLUCIÓN DE PROBLEMAS
+═══════════════════════════════════════════════════════════════════════════════
+
+PROBLEMA: El menú no aparece
+SOLUCIÓN: 
+→ Asegúrate de estar en el panel de "Informes"
+→ Recarga la página (F5)
+→ Limpia caché del navegador
+
+PROBLEMA: El botón "Descargar" no funciona
+SOLUCIÓN:
+→ Verifica que el navegador permita descargas
+→ Desactiva bloqueadores de anuncios temporalmente
+→ Prueba con otro navegador
+
+PROBLEMA: El reporte se ve cortado en la ventana "Ver"
+SOLUCIÓN:
+→ Usa Ctrl+- para alejar el zoom
+→ Utiliza la barra de desplazamiento horizontal
+→ Imprime en lugar de ver en pantalla
+
+PROBLEMA: No puedo copiar el contenido
+SOLUCIÓN:
+→ Comprueba que JavaScript esté habilitado
+→ Intenta desde otro navegador
+→ Usa "Ver" e imprime en PDF en su lugar
+
+
+📞 SOPORTE
+═══════════════════════════════════════════════════════════════════════════════
+
+Si tienes problemas con el generador de reportes:
+
+1. Verifica estar en la sección de INFORMES
+2. Comprueba que tengas datos cargados en el sistema
+3. Intenta los 3 botones para identificar cuál funciona
+4. Revisa la consola del navegador (F12) para mensajes de error
+5. Contacta al equipo de soporte si el problema persiste
+
+
+═══════════════════════════════════════════════════════════════════════════════
+✅ ¡Disfruta de tu nuevo generador de reportes integrado!
+═══════════════════════════════════════════════════════════════════════════════
+
+Fecha: 24 de octubre de 2025
+Sistema: PROFESORT ANALYTICS v2.0
+Módulo: Generador de Reportes TXT
+Versión: 1.0

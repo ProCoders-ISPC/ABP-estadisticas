@@ -1,5 +1,30 @@
 <app-banner-alertas></app-banner-alertas>
 <div class="informes-container">
+  <!-- Menú de Generación de Reportes -->
+  <div class="reports-menu">
+    <div class="reports-menu-content">
+      <div class="reports-header">
+        <i class="fas fa-file-export"></i>
+        <h4>Generar Reportes</h4>
+        <p class="reports-subtitle">Exporta un informe completo en formato TXT con todas las estadísticas</p>
+      </div>
+      <div class="reports-buttons">
+        <button class="report-btn report-btn-download" (click)="descargarReporte()" title="Descargar reporte como archivo TXT">
+          <i class="fas fa-download"></i>
+          <span>Descargar</span>
+        </button>
+        <button class="report-btn report-btn-view" (click)="verReporte()" title="Ver reporte en una ventana emergente">
+          <i class="fas fa-eye"></i>
+          <span>Ver</span>
+        </button>
+        <button class="report-btn report-btn-copy" (click)="copiarAlPortapapeles()" title="Copiar reporte al portapapeles">
+          <i class="fas fa-copy"></i>
+          <span>Copiar</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Selector de tipo de informe -->
   <div class="tabs-container">
     <button class="tab-button" [class.active]="tipoInforme === 'distribucion-areas'" (click)="seleccionarInforme('distribucion-areas')"><i class="fas fa-users"></i>Distribución Docentes</button>

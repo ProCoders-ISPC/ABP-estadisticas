@@ -1,3 +1,103 @@
+/* ===== MENÚ DE REPORTES ===== */
+.reports-menu {
+    background: linear-gradient(135deg, #043237 0%, #0F8795 100%);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 15px rgba(4, 50, 55, 0.15);
+}
+
+.reports-menu-content {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.reports-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+    color: white;
+}
+
+.reports-header i {
+    font-size: 24px;
+}
+
+.reports-header h4 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: white;
+}
+
+.reports-subtitle {
+    margin: 5px 0 0 36px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.reports-buttons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.report-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: white;
+}
+
+.report-btn i {
+    font-size: 16px;
+}
+
+.report-btn-download {
+    background: rgba(255, 255, 255, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.report-btn-download:hover {
+    background: rgba(255, 255, 255, 0.35);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.report-btn-view {
+    background: rgba(255, 255, 255, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.report-btn-view:hover {
+    background: rgba(255, 255, 255, 0.35);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.report-btn-copy {
+    background: rgba(255, 255, 255, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.report-btn-copy:hover {
+    background: rgba(255, 255, 255, 0.35);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.report-btn:active {
+    transform: translateY(0);
+}
+
 /* ===== CONTENEDOR PRINCIPAL ===== */
 .informes-container {
     padding: 20px;

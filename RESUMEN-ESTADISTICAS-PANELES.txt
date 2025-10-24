@@ -1,0 +1,364 @@
+═══════════════════════════════════════════════════════════════════════════════
+📊 RESUMEN DE ESTADÍSTICAS POR PANEL DE INFORMES
+   PROFESORT ANALYTICS - Guía de Presentación
+═══════════════════════════════════════════════════════════════════════════════
+
+
+🎯 PANEL 1: DISTRIBUCIÓN DE DOCENTES
+═══════════════════════════════════════════════════════════════════════════════
+
+📍 UBICACIÓN: Primera pestaña - "Distribución Docentes"
+
+📊 QUÉ VES EN ESTE PANEL:
+
+1. GRÁFICO DE BARRAS (Distribución de Docentes por Área)
+   └─ Visualiza la cantidad de docentes en cada área de conocimiento
+
+2. TABLA DETALLADA con columnas:
+   ├─ Área: Nombre del área (Exactas, Sociales, Humanidades, Naturales, etc.)
+   ├─ Cantidad: Número de docentes en esa área
+   └─ Porcentaje: % que representa respecto al total de docentes
+
+3. GRÁFICO DINÁMICO: Rendimiento Académico por Área
+   └─ Muestra asistencia promedio por área de conocimiento
+
+4. INTERPRETACIÓN AUTOMÁTICA que analiza:
+   ├─ Área dominante (mayor cantidad de docentes)
+   ├─ Área con menor presencia
+   ├─ Brecha entre áreas
+   ├─ Promedio por área
+   ├─ Coeficiente de variación (equilibrio/desigualdad)
+   ├─ Especialización vs Diversidad
+   ├─ Capacidad de Respuesta
+   └─ Desarrollo Institucional
+
+
+🗣️ QUÉ PUEDES DECIR:
+
+"Este panel muestra cómo están distribuidos nuestros docentes entre las 
+diferentes áreas de conocimiento. Podemos ver:
+
+• Cuántos docentes hay en cada área (Exactas, Sociales, etc.)
+• El porcentaje que representa cada área
+• Un gráfico que compara visualmente la distribución
+• Un análisis automático que interpreta si la distribución es equilibrada 
+  o si hay áreas con concentración excesiva de docentes
+
+Este análisis es importante porque nos ayuda a identificar si necesitamos 
+redistribuir recursos docentes entre áreas, si hay áreas especializadas 
+o si la carga está bien distribuida."
+
+
+═══════════════════════════════════════════════════════════════════════════════
+🎯 PANEL 2: CARGA ACADÉMICA
+═══════════════════════════════════════════════════════════════════════════════
+
+📍 UBICACIÓN: Segunda pestaña - "Carga Académica"
+
+📊 QUÉ VES EN ESTE PANEL:
+
+1. TARJETAS DE ESTADÍSTICAS (9 métricas principales):
+
+   a) PROMEDIO
+      └─ Promedio de materias por docente (μ)
+      
+   b) MEDIANA
+      └─ Valor central: el 50% de docentes tiene este valor o menos
+      
+   c) MODA
+      └─ La cantidad de materias más frecuente entre docentes
+      
+   d) MÁXIMO
+      └─ La carga más alta (docente más sobrecargado)
+      
+   e) MÍNIMO
+      └─ La carga más baja (docente menos cargado)
+      
+   f) DESVIACIÓN ESTÁNDAR (σ)
+      └─ Mide qué tan dispersas están las cargas
+      └─ Con código de color: Verde (equilibrada) a Rojo (muy desigual)
+      
+   g) VARIANZA
+      └─ La desviación estándar elevada al cuadrado
+      └─ Medida técnica de dispersión
+      
+   h) COEFICIENTE DE VARIACIÓN (CV)
+      └─ Dispersión relativa en porcentaje
+      └─ Con código de color según nivel
+      
+   i) RANGO
+      └─ Diferencia entre máximo y mínimo (amplitud de variación)
+
+2. INTERPRETACIÓN AUTOMÁTICA (en caja de colores)
+   └─ Generada automáticamente según las métricas
+   └─ Clasifica el estado: Excelente, Buena, Regular o Crítica
+
+3. GRÁFICO DE BARRAS
+   └─ Top 15 docentes con mayor carga académica
+
+4. INTERPRETACIÓN DETALLADA que incluye:
+   ├─ Medidas de tendencia central
+   ├─ Análisis de variabilidad
+   ├─ Segmentación docente (sin carga, equilibrados, sobrecargados)
+   ├─ Evaluación de equidad
+   └─ Recomendaciones estratégicas
+
+
+🗣️ QUÉ PUEDES DECIR:
+
+"Este panel es el corazón del análisis de carga académica. Aquí vemos:
+
+• PROMEDIO: Cuántas materias tiene en promedio cada docente
+• MEDIANA: El valor central (que divide los docentes en dos grupos iguales)
+• MÁXIMO/MÍNIMO: Los extremos (docente más cargado vs menos cargado)
+• DESVIACIÓN ESTÁNDAR: Qué tan equilibrada está la distribución
+  - Si es baja = docentes con carga similar
+  - Si es alta = hay docentes muy cargados y otros con poca carga
+• COEFICIENTE DE VARIACIÓN: La dispersión en términos relativos
+
+Todo esto nos dice si la carga académica está EQUITATIVA o si hay 
+DESEQUILIBRIOS que requieren redistribución de materias.
+
+El sistema calcula automáticamente si la situación es:
+🟢 EXCELENTE (distribución muy equilibrada)
+🟡 BUENA (ligeras variaciones, controladas)
+🟠 REGULAR (variabilidad moderada, requiere ajustes)
+🔴 CRÍTICA (alta variabilidad, redistribución urgente)"
+
+
+═══════════════════════════════════════════════════════════════════════════════
+🎯 PANEL 3: DISTRIBUCIÓN DE MATERIAS
+═══════════════════════════════════════════════════════════════════════════════
+
+📍 UBICACIÓN: Tercera pestaña - "Distribución Materias"
+
+📊 QUÉ VES EN ESTE PANEL:
+
+1. TARJETAS RESUMEN (4 métricas principales):
+   
+   a) TOTAL MATERIAS
+      └─ Cantidad total de materias en el sistema
+      
+   b) MATERIAS ASIGNADAS
+      └─ Cuántas tienen docente responsable (verde)
+      └─ Muestra porcentaje del total
+      
+   c) MATERIAS SIN ASIGNAR
+      └─ Cuántas aún no tienen docente (naranja/rojo)
+      └─ Muestra porcentaje del total
+      
+   d) % ASIGNACIÓN
+      └─ Cobertura total del sistema (KPI importante)
+
+2. GRÁFICO 1: Total de Materias por Área
+   └─ Barras mostrando cuántas materias hay en cada área
+
+3. GRÁFICO 2: Comparativo Asignadas vs Sin Asignar
+   └─ Dos barras por área: una verde (asignadas), otra roja (sin asignar)
+
+4. TABLA DETALLADA POR ÁREA con columnas:
+   ├─ Área de Conocimiento
+   ├─ Total de Materias en esa área
+   ├─ Materias Asignadas (con % de barra visual)
+   ├─ Materias Sin Asignar
+   └─ % Asignación por área
+
+5. GRÁFICO RADAR: Análisis de Varianza
+   └─ Compara:
+      ├─ Promedio de materias asignadas
+      ├─ Varianza de asignadas
+      ├─ Desviación estándar de asignadas
+      └─ Coeficiente de variación
+
+6. ANÁLISIS DE VARIANZA (Tablas):
+   
+   Materias Asignadas:
+   ├─ Promedio
+   ├─ Varianza
+   ├─ Desviación
+   └─ Coef. Variación
+   
+   Materias Sin Asignar:
+   ├─ Promedio
+   ├─ Varianza
+   ├─ Desviación
+   └─ Coef. Variación
+
+7. INTERPRETACIÓN AUTOMÁTICA
+   └─ Analiza si la distribución es equilibrada o hay áreas críticas
+
+
+🗣️ QUÉ PUEDES DECIR:
+
+"Este panel muestra la cobertura académica del sistema:
+
+• TOTAL MATERIAS: El inventario completo que debemos cubrir
+• ASIGNADAS: Las que ya tienen docente (indica disponibilidad educativa)
+• SIN ASIGNAR: Las que aún necesitan docente (brechas de cobertura)
+• % ASIGNACIÓN: El indicador clave de eficiencia del sistema
+
+Para cada área podemos ver:
+- Cuántas materias son, cuántas están cubiertas y cuántas faltan
+- Un gráfico que compara visualmente la brecha
+
+El sistema analiza automáticamente si:
+✅ La cobertura es completa (95%+)
+🟡 Hay pocas materias sin asignar (requiere ajustes menores)
+🔴 Hay muchas sin asignar (requiere contrataciones urgentes)
+
+Esto es crítico para la calidad educativa, porque materias sin asignar = 
+estudiantes sin profesores."
+
+
+═══════════════════════════════════════════════════════════════════════════════
+🎯 PANEL 4: ESTUDIANTES Y ASISTENCIA
+═══════════════════════════════════════════════════════════════════════════════
+
+📍 UBICACIÓN: Cuarta pestaña - "Estudiantes"
+
+📊 QUÉ VES EN ESTE PANEL:
+
+1. TARJETAS RESUMEN (4 métricas principales):
+   
+   a) TOTAL ESTUDIANTES
+      └─ Matrícula total del sistema
+      
+   b) ESTUDIANTES ACTIVOS
+      └─ Los que tienen actividad reciente (verde)
+      └─ Muestra porcentaje de participación
+      
+   c) ASISTENCIA PROMEDIO
+      └─ Promedio institucional de asistencia (%)
+      
+   d) ESTUDIANTES INACTIVOS
+      └─ Sin actividad reciente (amarillo/rojo)
+
+2. GRÁFICO PIE/DONUT: Distribución de Materias por Área
+   └─ Proporción de estudiantes inscritos en cada área
+
+3. GRÁFICO BARRAS: Evolución de Asistencia Semanal
+   └─ Tendencia de asistencia semana por semana
+
+4. TABLA: Detalle de Asistencia Semanal con columnas:
+   ├─ Semana
+   ├─ Presentes
+   ├─ Ausentes
+   ├─ Tardanzas
+   └─ % Asistencia (con barra visual)
+
+5. TABLA: Ranking de Asistencia por Estudiante (Top 20) con columnas:
+   ├─ Posición (con badges para Top 3)
+   ├─ Nombre del Estudiante
+   ├─ Legajo (matrícula)
+   ├─ Total de Clases
+   ├─ Presentes
+   ├─ Ausentes
+   ├─ Tardanzas
+   ├─ % Asistencia (con barra visual y código de color)
+   └─ Estado (Excelente/Buena/Regular/Crítica)
+
+6. GRÁFICO DINÁMICO: Evolución Mensual de Asistencia
+   └─ Línea con tendencia de últimos 6 meses
+   └─ Muestra:
+      ├─ Presentes (línea azul)
+      ├─ Ausentes (línea roja)
+      └─ Tardanzas (línea amarilla)
+
+7. MINI TARJETAS DE RESUMEN
+   ├─ Estado (Datos Reales/Sin Datos)
+   ├─ Meses con Datos
+   └─ Registros del Último Mes
+
+8. INTERPRETACIÓN AUTOMÁTICA
+   └─ Análisis integral de:
+      ├─ Tasa de actividad
+      ├─ Nivel de asistencia
+      ├─ Segmentación de rendimiento
+      ├─ Análisis de riesgos
+      └─ Recomendaciones estratégicas
+
+
+🗣️ QUÉ PUEDES DECIR:
+
+"Este panel analiza a nuestros estudiantes desde dos perspectivas:
+
+PARTICIPACIÓN Y ACTIVIDAD:
+• TOTAL ESTUDIANTES: La matrícula completa
+• ACTIVOS: Los que están participando (% importante de engagement)
+• INACTIVOS: Los que no muestran actividad (en riesgo de deserción)
+
+ASISTENCIA:
+• PROMEDIO: El % promedio de asistencia institucional
+• RANKING: Top 20 estudiantes ordenados por asistencia
+• EVOLUCIÓN: Cómo ha variado la asistencia en los últimos 6 meses
+
+El sistema clasifica a cada estudiante:
+🟢 EXCELENTE (≥80% asistencia)
+🟡 BUENA (70-79%)
+🟠 REGULAR (60-69%)
+🔴 CRÍTICA (<60% - requiere intervención inmediata)
+
+Esto es fundamental para identificar estudiantes en riesgo y tomar 
+acciones preventivas como tutorías, seguimiento personalizado, etc."
+
+
+═══════════════════════════════════════════════════════════════════════════════
+📌 MÉTRICA CLAVE: CÓDIGO DE COLORES EN TODO EL SISTEMA
+═══════════════════════════════════════════════════════════════════════════════
+
+El sistema usa colores para comunicar estado:
+
+🟢 VERDE = Excelente / Bueno / Controlado
+🟡 AMARILLO = Regular / Advertencia / Requiere seguimiento
+🟠 NARANJA = Preocupante / Requiere atención
+🔴 ROJO = Crítico / Requiere acción inmediata
+
+Este código de colores es CONSISTENTE en todos los paneles, lo que permite
+lectura rápida del estado del sistema sin necesidad de analizar números.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+💡 CONCEPTOS ESTADÍSTICOS QUE PUEDES MENCIONAR
+═══════════════════════════════════════════════════════════════════════════════
+
+Si alguien pregunta qué significan las métricas:
+
+MEDIDAS DE TENDENCIA CENTRAL:
+• PROMEDIO (Media): La suma de todos dividida entre la cantidad
+• MEDIANA: El valor central cuando ordenas todos de menor a mayor
+• MODA: El valor que más se repite
+
+MEDIDAS DE DISPERSIÓN:
+• DESVIACIÓN ESTÁNDAR (σ): Qué tan dispersos están los datos
+• VARIANZA: Desviación estándar al cuadrado (técnica)
+• COEFICIENTE DE VARIACIÓN: Dispersión como % del promedio
+
+INTERPRETACIÓN:
+• Desviación BAJA = Datos similares (distribuido uniformemente)
+• Desviación ALTA = Datos muy diferentes (distribuido irregularmente)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+🎤 EJEMPLO DE PRESENTACIÓN COMPLETA (3-4 minutos)
+═══════════════════════════════════════════════════════════════════════════════
+
+"Tenemos 4 paneles principales en el módulo de informes:
+
+1. PANEL DE DISTRIBUCIÓN: Muestra cómo están distribuidos nuestros docentes
+   entre las diferentes áreas académicas. Vemos que la mayoría están en
+   [ÁREA], mientras que [OTRA ÁREA] tiene menor concentración.
+
+2. PANEL DE CARGA: Aquí analizamos si la distribución de materias es 
+   equitativa. El promedio es [X] materias por docente, pero hay variabilidad.
+   Esto se ve reflejado en la desviación estándar de [Y], que indica [ESTADO].
+
+3. PANEL DE MATERIAS: Este es crítico para la calidad educativa. Tenemos
+   [TOTAL] materias en el sistema, de las cuales [ASIGNADAS] ya tienen docente
+   responsable. Las [SIN ASIGNAR] requieren atención.
+
+4. PANEL DE ESTUDIANTES: Monitorea la participación y asistencia. Tenemos
+   [TOTAL] estudiantes, de los cuales [ACTIVOS]% están activos. La asistencia
+   promedio es [%], pero podemos ver que hay estudiantes en diferentes niveles
+   de compromiso, desde excelente hasta crítica."
+
+═══════════════════════════════════════════════════════════════════════════════
